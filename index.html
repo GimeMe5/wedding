@@ -5,17 +5,33 @@
   <title>Telegram Mini App</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="style.css">
+  <pre id="debug-log" style="white-space: pre-wrap; font-size: 12px;"></pre>
 </head>
 <body>
   <h2 class="testHeader">Добро пожаловать!</h2>
   <button onclick="sendData()">Отправить данные</button>
 
 <script>
+  function log(message) {
+    document.getElementById("debug-log").textContent += message + "\n";
+  }
+
+  log("Запуск WebApp");
+
   const tg = window.Telegram.WebApp;
-  tg.expand(); // развернуть на весь экран, по желанию
+  tg.expand();
+
+  log("tg.initDataUnsafe: " + JSON.stringify(tg.initDataUnsafe));
 
   function sendData() {
     const user = tg.initDataUnsafe.user;
+
+    if (!user) {
+      log("Пользователь не определён.");
+      return;
+    }
+
+    log("Отправляем данные: " + JSON.stringify(user));
 
     fetch("http://91.218.140.203:8080/api/telegram-user", {
       method: "POST",
@@ -28,10 +44,16 @@
         last_name: user.last_name,
         username: user.username
       })
-    }).then(() => {
-      alert("Данные отправлены!");
-    });
+    })
+            .then(res => res.text())
+            .then(text => {
+              log("Ответ от сервера: " + text);
+            })
+            .catch(err => {
+              log("Ошибка fetch: " + err);
+            });
   }
+
 </script>
 
 </body>
