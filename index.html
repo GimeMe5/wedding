@@ -4,22 +4,35 @@
 <head>
   <title>Telegram Mini App</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Добро пожаловать!</h2>
+  <h2 class="testHeader">Добро пожаловать!</h2>
   <button onclick="sendData()">Отправить данные</button>
 
-  <script>
-    function sendData() {
-      const tg = window.Telegram.WebApp;
-      const user = tg.initDataUnsafe.user;
+<script>
+  const tg = window.Telegram.WebApp;
+  tg.expand(); // развернуть на весь экран, по желанию
 
-      fetch('https://your-backend.com/api/telegram-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(user)
-      });
-    }
-  </script>
+  function sendData() {
+    const user = tg.initDataUnsafe.user;
+
+    fetch("https://your-backend.com/api/telegram-user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        username: user.username
+      })
+    }).then(() => {
+      alert("Данные отправлены!");
+    });
+  }
+</script>
+
 </body>
 </html>
