@@ -16,7 +16,7 @@
     document.getElementById("debug-log").textContent += message + "\n";
   }
 
-  log("Запуск WebApp3");
+  log("Запуск WebApp4");
 
   const tg = window.Telegram.WebApp;
   tg.expand();
@@ -47,12 +47,16 @@
         username: user.username
       })
     })
-            .then(res => res.text())
+            .then(res => {
+              console.log("status:", res.status);
+              return res.text();
+            })
             .then(text => {
               log("Ответ от сервера: " + text);
             })
             .catch(err => {
-              log("Ошибка fetch: " + err);
+              log("Ошибка fetch: " + err.message);
+              console.error(err);
             });
   }
 
