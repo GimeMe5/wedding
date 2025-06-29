@@ -33,7 +33,7 @@
 
     log("Отправляем данные: " + JSON.stringify(user));
 
-    fetch("https://sovaint.ru/api/telegram-user", {
+    fetch("https://sovaint.ru:8443/api/telegram-user", {
       method: "POST",
       mode: "cors",
       credentials: "omit", // обязательно!
