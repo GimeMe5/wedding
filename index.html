@@ -16,7 +16,7 @@
     document.getElementById("debug-log").textContent += message + "\n";
   }
 
-  log("Запуск WebApp5");
+  log("Запуск WebApp6");
 
   const tg = window.Telegram.WebApp;
   tg.expand();
@@ -31,31 +31,17 @@
       return;
     }
 
-    log("Отправляем данные: " + JSON.stringify(user));
-
     fetch("https://sovaint.ru:8443/api/telegram-user", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "X-Telegram-InitData": tg.initData
       },
       body: JSON.stringify({
-        id: user.id,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        username: user.username
+        user: tg.initDataUnsafe.user
       })
-    })
-            .then(res => {
-              console.log("status:", res.status);
-              return res.text();
-            })
-            .then(text => {
-              log("Ответ от сервера: " + text);
-            })
-            .catch(err => {
-              log("Ошибка fetch: " + err.message);
-              console.error(err);
-            });
+    });
+
   }
 
 </script>
