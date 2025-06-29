@@ -33,8 +33,10 @@
 
     log("Отправляем данные: " + JSON.stringify(user));
 
-    fetch("https://webhook.site/f8dcbd29-7730-4b9d-ab6b-58e02404a32b", {
+    fetch("https://sovaint.ru/api/telegram-user", {
       method: "POST",
+      mode: "cors",
+      credentials: "omit", // обязательно!
       headers: {
         "Content-Type": "application/json"
       },
