@@ -41,7 +41,7 @@
     const diff = deadline - now;
 
     if (diff <= 0) {
-      document.getElementById("timer").textContent = "⏳ Свадьба уже началась!";
+      document.getElementById("countdown").textContent = "⏳ Свадьба уже началась!";
       return;
     }
 
@@ -50,7 +50,7 @@
     const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-    document.getElementById("timer").textContent =
+    document.getElementById("countdown").textContent =
             `Осталось ${days} дней ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
   }
 
