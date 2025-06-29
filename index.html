@@ -1,51 +1,57 @@
-<!-- telegram-mini-app/index.html -->
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Telegram Mini App</title>
+  <title>Wedding Invite</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="style.css">
-  <pre id="debug-log" style="white-space: pre-wrap; font-size: 12px;"></pre>
 </head>
 <body>
-  <h2 class="testHeader">Добро пожаловать!</h2>
-  <button onclick="sendData()">Отправить данные</button>
+<div class="card">
+  <h2 id="greeting">Привет!</h2>
+  <p>Мы приглашаем тебя на нашу свадьбу 🎉</p>
+  <p>До начала осталось:</p>
+  <div class="timer" id="countdown">--:--:--</div>
+  <button onclick="confirmAttendance()">Я приду</button>
+</div>
 
 <script>
-  function log(message) {
-    document.getElementById("debug-log").textContent += message + "\n";
-  }
-
-  log("Запуск WebApp6");
-
   const tg = window.Telegram.WebApp;
   tg.expand();
 
-  log("tg.initDataUnsafe: " + JSON.stringify(tg.initDataUnsafe));
-  log("tg.initData: " + JSON.stringify(tg.initData));
+  const user = tg.initDataUnsafe.user;
+  document.getElementById("greeting").textContent = `Дорогой(ая) ${user.first_name},`;
 
-  function sendData() {
-    const user = tg.initDataUnsafe.user;
-
-    if (!user) {
-      log("Пользователь не определён.");
-      return;
-    }
-
-    fetch("https://sovaint.ru:8443/api/telegram-user", {
+  function confirmAttendance() {
+    fetch("https://sovaint.ru:8443/api/rsvp", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "X-Telegram-InitData": tg.initData
       },
-      body: JSON.stringify({
-        user: tg.initDataUnsafe.user
-      })
+      body: JSON.stringify({ user })
     });
-
+    tg.showPopup({ message: "Спасибо! Ждём тебя 🎊" });
   }
 
-</script>
+  // Countdown to wedding date
+  const targetDate = new Date("2025-08-14T12:00:00Z"); // 15:00 MSK = 12:00 UTC
+  const countdownEl = document.getElementById("countdown");
 
+  function updateCountdown() {
+    const now = new Date();
+    const diff = targetDate - now;
+    if (diff <= 0) {
+      countdownEl.textContent = "Скоро начнётся!";
+      return;
+    }
+    const hours = Math.floor(diff / 1000 / 60 / 60);
+    const minutes = Math.floor((diff / 1000 / 60) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+    countdownEl.textContent = `${hours}ч ${minutes}м ${seconds}с`;
+  }
+
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+</script>
 </body>
 </html>
