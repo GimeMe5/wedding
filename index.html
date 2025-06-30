@@ -1,66 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-  <title>Wedding Invite</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Wedding Invite</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="overlay"></div>
+
 <div class="card">
-  <h2 id="greeting">Привет!</h2>
-  <p>Мы приглашаем тебя на нашу свадьбу 🎉</p>
-  <p>До начала осталось:</p>
-  <div class="timer" id="countdown">--:--:--</div>
-  <button onclick="confirmAttendance()">Я приду</button>
+    <h2 id="greeting">Привет!</h2>
+    <p>Мы приглашаем тебя на нашу свадьбу 🎉</p>
+    <p>До начала осталось:</p>
+    <div class="timer" id="countdown">--:--:--</div>
+    <button onclick="confirmAttendance()">Я приду</button>
 </div>
 
 <script>
-  const tg = window.Telegram.WebApp;
-  tg.expand();
+    const tg = window.Telegram.WebApp;
+    tg.expand();
 
-  const user = tg.initDataUnsafe.user;
-  document.getElementById("greeting").textContent = `Дорогой(ая) ${user.first_name},`;
+    const user = tg.initDataUnsafe.user;
+    document.getElementById("greeting").textContent = `Дорогой(ая) ${user?.first_name || "гость"},`;
 
-  function confirmAttendance() {
-    fetch("https://sovaint.ru:8443/api/rsvp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Telegram-InitData": tg.initData
-      },
-      body: JSON.stringify({ user })
-    });
-    tg.showPopup({ message: "Спасибо! Ждём тебя 🎊" });
-  }
-
-  // Countdown to wedding date
-  const deadline = new Date("2025-08-14T15:00:00+03:00"); // 15:00 МСК
-
-  function updateCountdown() {
-    const now = new Date();
-    const diff = deadline - now;
-
-    if (diff <= 0) {
-      document.getElementById("countdown").textContent = "⏳ Свадьба уже началась!";
-      return;
+    function confirmAttendance() {
+        fetch("https://sovaint.ru:8443/api/rsvp", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Telegram-InitData": tg.initData
+            },
+            body: JSON.stringify({user})
+        });
+        tg.showPopup({message: "Спасибо! Ждём тебя 🎊"});
     }
 
-    const seconds = Math.floor(diff / 1000) % 60;
-    const minutes = Math.floor(diff / (1000 * 60)) % 60;
-    const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const deadline = new Date("2025-08-14T15:00:00+03:00");
 
-    document.getElementById("countdown").textContent =
-            `Осталось ${days} дней ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-  }
+    function updateCountdown() {
+        const now = new Date();
+        const diff = deadline - now;
+        const timerEl = document.getElementById("countdown");
 
-  function pad(n) {
-    return n.toString().padStart(2, '0');
-  }
+        if (diff <= 0) {
+            timerEl.textContent = "⏳ Свадьба уже началась!";
+            return;
+        }
 
-  setInterval(updateCountdown, 1000);
-  updateCountdown();
+        const seconds = Math.floor(diff / 1000) % 60;
+        const minutes = Math.floor(diff / (1000 * 60)) % 60;
+        const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
+        timerEl.textContent = `${days} дней ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    }
+
+    function pad(n) {
+        return n.toString().padStart(2, '0');
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
 </script>
 </body>
 </html>

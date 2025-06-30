@@ -1,32 +1,66 @@
-body {
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+html, body {
     margin: 0;
     padding: 0;
-    font-family: sans-serif;
-    background: url('background.jpg') no-repeat center center fixed;
+    height: 100%;
+    font-family: 'Orbitron', sans-serif;
+    background: url('futuristic_background.jpg') no-repeat center center fixed;
     background-size: cover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    color: #fff;
 }
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+
 .card {
-    background: rgba(255,255,255,0.9);
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(10, 10, 30, 0.85);
+    padding: 30px;
     border-radius: 20px;
-    padding: 24px;
-    max-width: 90%;
+    max-width: 400px;
     text-align: center;
-    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    box-shadow: 0 0 20px #0ff, 0 0 40px #0ff inset;
 }
+
+h2 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #0ff;
+    text-shadow: 0 0 5px #0ff;
+}
+
+p {
+    margin: 12px 0;
+    font-size: 16px;
+}
+
 .timer {
-    font-size: 18px;
-    margin-top: 10px;
+    font-size: 20px;
+    margin: 20px 0;
+    color: #0ff;
+    text-shadow: 0 0 5px #0ff;
 }
+
 button {
-    padding: 12px 24px;
+    background: #0ff;
     border: none;
-    border-radius: 12px;
-    background: #4CAF50;
-    color: white;
-    font-size: 18px;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 10px;
     cursor: pointer;
+    color: #000;
+    font-weight: bold;
+    box-shadow: 0 0 10px #0ff;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: #00e6e6;
 }
