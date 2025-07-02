@@ -9,7 +9,7 @@ body {
     align-items: center;
     min-height: 100vh;
     /* Фоновое изображение из S3, как указано пользователем */
-    background-image: url('https://i.imgur.com/your_image_from_s3.jpg'); /* Замените на реальный URL вашей картинки из S3 */
+    background-image: url('https://s3.ru1.storage.beget.cloud/e2464ee0686d-strinity/wedding/night_city_panel.png'); /* Замените на реальный URL вашей картинки из S3 */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -40,7 +40,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 30%; /* Уменьшено до 30% */
+    width: 60%; /* Уменьшено до 30% */
     max-width: 350px; /* Уменьшена максимальная ширина */
     margin-top: 15vh; /* Регулируем верхний отступ для выравнивания с рамкой изображения */
     margin-bottom: 15vh; /* Регулируем нижний отступ */
