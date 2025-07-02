@@ -9,7 +9,7 @@ body {
     align-items: center;
     min-height: 100vh;
     /* Фоновое изображение из S3, как указано пользователем */
-    background-image: url('https://s3.ru1.storage.beget.cloud/e2464ee0686d-strinity/wedding/night_city_panel.png'); /* Замените на реальный URL вашей картинки из S3 */
+    background-image: url('https://i.imgur.com/your_image_from_s3.jpg'); /* Замените на реальный URL вашей картинки из S3 */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -40,8 +40,8 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 40%; /* Регулируем ширину, чтобы соответствовать центральной рамке на изображении */
-    max-width: 400px; /* Максимальная ширина для области контента */
+    width: 30%; /* Уменьшено до 30% */
+    max-width: 350px; /* Уменьшена максимальная ширина */
     margin-top: 15vh; /* Регулируем верхний отступ для выравнивания с рамкой изображения */
     margin-bottom: 15vh; /* Регулируем нижний отступ */
     flex-grow: 1; /* Позволяем области контента расти */
@@ -54,6 +54,8 @@ body {
     line-height: 1.6;
     color: #c0c0ff;
     text-shadow: 0 0 5px rgba(0, 198, 255, 0.5); /* Едва заметное свечение для текста */
+    word-wrap: break-word; /* Перенос длинных слов */
+    overflow-wrap: break-word; /* Альтернатива для переноса длинных слов */
 }
 
 .countdown-section {
@@ -108,7 +110,7 @@ body {
 /* Адаптивные настройки */
 @media (max-width: 768px) {
     .content-area {
-        width: 90%;
+        width: 40%; /* Увеличиваем для средних экранов */
         margin-top: 10vh;
         margin-bottom: 10vh;
     }
@@ -127,7 +129,7 @@ body {
 
 @media (max-width: 480px) {
     .content-area {
-        width: 95%;
+        width: 50%; /* Увеличиваем для маленьких экранов */
         margin-top: 8vh;
         margin-bottom: 8vh;
     }
