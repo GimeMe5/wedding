@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const requestBody = {
                 id: userId,
-                status: 'confirmed'
+                status: 'CONFIRMED'
             };
             logToScreen(`Тело запроса для /rsvp: ${JSON.stringify(requestBody, null, 2)}`);
 
