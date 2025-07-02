@@ -40,8 +40,8 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 70%; /* Увеличено для основной ширины */
-    max-width: 450px; /* Увеличена максимальная ширина */
+    width: 80%; /* Увеличено для основной ширины */
+    max-width: 500px; /* Увеличена максимальная ширина */
     margin-top: 15vh; /* Регулируем верхний отступ для выравнивания с рамкой изображения */
     margin-bottom: 15vh; /* Регулируем нижний отступ */
     flex-grow: 1; /* Позволяем области контента расти */
@@ -110,7 +110,7 @@ body {
 /* Адаптивные настройки */
 @media (max-width: 768px) {
     .content-area {
-        width: 60%; /* Увеличиваем для средних экранов */
+        width: 70%; /* Увеличиваем для средних экранов */
         margin-top: 10vh;
         margin-bottom: 10vh;
     }
@@ -129,7 +129,7 @@ body {
 
 @media (max-width: 480px) {
     .content-area {
-        width: 70%; /* Увеличиваем для маленьких экранов */
+        width: 80%; /* Увеличиваем для маленьких экранов */
         margin-top: 8vh;
         margin-bottom: 8vh;
     }
