@@ -9,12 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Базовый URL для запросов к бэкенду. Замените на актуальный URL вашего бэкенда.
     const API_BASE_URL = 'https://sovaint.ru:8443/api';
+    const TG = window.Telegram.WebApp
 
     // Инициализация Telegram Web App
-    if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
-        // window.Telegram.WebApp.setBackgroundColor('#0a0a2a');
+    if (window.Telegram && TG) {
+        TG.ready();
+        TG.expand();
+        // TG.setBackgroundColor('#0a0a2a');
     } else {
         console.warn('Telegram Web App SDK не загружен. Функционал может быть ограничен.');
     }
@@ -22,14 +23,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Функция для получения всех данных одним запросом
     async function fetchAllContent() {
         try {
-            const initData = window.Telegram.WebApp ? window.Telegram.WebApp.initData : '';
+            const initData = TG ? TG.initData : '';
 
             const response = await fetch(`${API_BASE_URL}/invocation`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Telegram-Init-Data': initData
-                }
+                },
+                body: JSON.stringify({TG.initDataUnsafe.user})
             });
 
             if (!response.ok) {
@@ -70,12 +72,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Функция для проверки статуса пользователя
     async function checkUserStatus() {
         try {
-            const initData = window.Telegram.WebApp ? window.Telegram.WebApp.initData : '';
+            const initData = TG ? TG.initData : '';
             const response = await fetch(`${API_BASE_URL}/user-status`, {
                 method: 'POST',
                 headers: {
                     'X-Telegram-Init-Data': initData
-                }
+                },
+                body: JSON.stringify({TG.initDataUnsafe.user})
             });
 
             if (!response.ok) {
@@ -138,8 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
         confirmButton.textContent = 'Отправка...';
 
         try {
-            const initData = window.Telegram.WebApp ? window.Telegram.WebApp.initData : '';
-            const userId = window.Telegram.WebApp.initDataUnsafe?.user?.id || 'unknown';
+            const initData = TG ? TG.initData : '';
+            const userId = TG.initDataUnsafe?.user?.id || 'unknown';
 
             const response = await fetch(`${API_BASE_URL}/rsvp`, {
                 method: 'POST',
@@ -157,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 confirmButton.textContent = 'Подтверждено!';
                 confirmButton.style.background = 'linear-gradient(45deg, #28a745, #218838)';
                 // После подтверждения можно обновить статус или закрыть приложение
-                // window.Telegram.WebApp.close();
+                // TG.close();
             } else {
                 const errorText = await response.text();
                 confirmButton.textContent = 'Ошибка!';
