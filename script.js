@@ -294,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
             logToScreen(`Данные пользователя для /rsvp: userId=${userId}`);
 
             const requestBody = {
-                telegramUserId: userId,
+                id: userId,
                 status: 'confirmed'
             };
             logToScreen(`Тело запроса для /rsvp: ${JSON.stringify(requestBody, null, 2)}`);
