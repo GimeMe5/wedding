@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const section3 = document.getElementById('section3');
     const confirmButton = document.getElementById('confirmButton');
     const container = document.querySelector('.container'); // Получаем основной контейнер
+    const debugOutput = document.getElementById('debug-output'); // Элемент для отладочного вывода
 
     let countdownInterval;
 
@@ -11,42 +12,84 @@ document.addEventListener('DOMContentLoaded', () => {
     const API_BASE_URL = 'https://sovaint.ru:8443/api';
     const TG = window.Telegram.WebApp; // Сокращение для удобства
 
+    // Функция для вывода отладочной информации на экран
+    function logToScreen(message, isError = false) {
+        if (debugOutput) {
+            const p = document.createElement('p');
+            p.style.color = isError ? 'red' : 'limegreen';
+            p.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            debugOutput.appendChild(p);
+            debugOutput.scrollTop = debugOutput.scrollHeight; // Прокручиваем вниз
+            debugOutput.classList.add('active'); // Показываем отладочный блок
+        }
+    }
+
+    // Перехватываем console.log и console.error для вывода на экран
+    const originalConsoleLog = console.log;
+    const originalConsoleError = console.error;
+
+    console.log = (...args) => {
+        originalConsoleLog(...args);
+        logToScreen(args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg).join(' '));
+    };
+
+    console.error = (...args) => {
+        originalConsoleError(...args);
+        logToScreen(args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg).join(' '), true);
+    };
+
+
     // Инициализация Telegram Web App
     if (window.Telegram && TG) {
         TG.ready();
         TG.expand();
+        logToScreen('Telegram Web App SDK инициализирован.');
+        logToScreen(`initData: ${TG.initData}`);
+        logToScreen(`initDataUnsafe: ${JSON.stringify(TG.initDataUnsafe, null, 2)}`);
         // TG.setBackgroundColor('#0a0a2a');
     } else {
-        console.warn('Telegram Web App SDK не загружен. Функционал может быть ограничен.');
+        logToScreen('Telegram Web App SDK не загружен. Функционал может быть ограничен.', true);
     }
 
     // Функция для получения всех данных одним запросом
     async function fetchAllContent() {
+        logToScreen('Начало запроса fetchAllContent...');
         try {
             const initData = TG ? TG.initData : '';
-            // Получаем данные пользователя из initDataUnsafe, если они доступны
             const user = TG.initDataUnsafe?.user;
+            logToScreen(`Данные пользователя для /invocation: ${JSON.stringify(user, null, 2)}`);
 
-            // Если бэкенд ожидает POST-запрос с телом для /invocation
+            const requestBody = {
+                id: user?.id || null,
+                first_name: user?.first_name || '',
+                last_name: user?.last_name || '',
+                username: user?.username || ''
+            };
+            logToScreen(`Тело запроса для /invocation: ${JSON.stringify(requestBody, null, 2)}`);
+
             const response = await fetch(`${API_BASE_URL}/invocation`, {
-                method: 'POST', // Изменено на POST, как в предоставленном коде
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Telegram-Init-Data': initData // Используем динамический initData
+                    'X-Telegram-Init-Data': initData
                 },
-                body: JSON.stringify({user})
+                body: JSON.stringify(requestBody)
             });
 
+            logToScreen(`Ответ от /invocation. Статус: ${response.status}`);
             if (!response.ok) {
-                throw new Error(`Ошибка HTTP! Статус: ${response.status}`);
+                const errorText = await response.text();
+                logToScreen(`Ошибка от /invocation: ${errorText}`, true);
+                throw new Error(`Ошибка HTTP! Статус: ${response.status}. Ответ: ${errorText}`);
             }
-            // Ожидаем JSON-ответ, содержащий text1, countdownDate и text3
-            return await response.json();
+            const data = await response.json();
+            logToScreen(`Полученные данные от /invocation: ${JSON.stringify(data, null, 2)}`);
+            return data;
         } catch (error) {
-            console.error('Ошибка при получении всего контента:', error);
+            logToScreen(`Критическая ошибка при получении всего контента: ${error.message}`, true);
             return {
                 text1: 'Не удалось загрузить текст 1.',
-                countdownDate: null, // null, если дата не загружена
+                countdownDate: null,
                 text3: 'Не удалось загрузить текст 3.'
             };
         }
@@ -70,45 +113,58 @@ document.addEventListener('DOMContentLoaded', () => {
         if (distance < 0) {
             clearInterval(countdownInterval);
             countdownElement.innerHTML = "Событие началось!";
+            logToScreen('Обратный отсчет завершен.');
         }
     }
 
     // Функция для проверки статуса пользователя
     async function checkUserStatus() {
+        logToScreen('Начало запроса checkUserStatus...');
         try {
             const initData = TG ? TG.initData : '';
-            const user = TG.initDataUnsafe?.user; // Исправлено: TG вместо tg
+            const user = TG.initDataUnsafe?.user;
+            logToScreen(`Данные пользователя для /user-status: ${JSON.stringify(user, null, 2)}`);
 
-            // Если бэкенд ожидает POST-запрос с телом для /user-status
+            const requestBody = {
+                id: user?.id || null,
+                first_name: user?.first_name || '',
+                last_name: user?.last_name || '',
+                username: user?.username || ''
+            };
+            logToScreen(`Тело запроса для /user-status: ${JSON.stringify(requestBody, null, 2)}`);
+
             const response = await fetch(`${API_BASE_URL}/user-status`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Telegram-Init-Data': initData // Используем динамический initData
+                    'X-Telegram-Init-Data': initData
                 },
-                body: JSON.stringify({user})
+                body: JSON.stringify(requestBody)
             });
 
+            logToScreen(`Ответ от /user-status. Статус: ${response.status}`);
             if (!response.ok) {
-                throw new Error(`Ошибка HTTP! Статус: ${response.status}`);
+                const errorText = await response.text();
+                logToScreen(`Ошибка от /user-status: ${errorText}`, true);
+                throw new Error(`Ошибка HTTP! Статус: ${response.status}. Ответ: ${errorText}`);
             }
             const statusData = await response.json();
-            // Предполагаем, что бэкенд возвращает { status: 'new' | 'confirmed' | 'other' }
+            logToScreen(`Полученные данные от /user-status: ${JSON.stringify(statusData, null, 2)}`);
             return statusData.status;
         } catch (error) {
-            console.error('Ошибка при проверке статуса пользователя:', error);
+            logToScreen(`Критическая ошибка при проверке статуса пользователя: ${error.message}`, true);
             return 'error';
         }
     }
 
     // Загрузка всего контента и отображение страницы
     async function loadAndDisplayContent() {
+        logToScreen('Запуск loadAndDisplayContent...');
         const userStatus = await checkUserStatus();
+        logToScreen(`Полученный статус пользователя: ${userStatus}`);
 
-        // Скрываем контейнер по умолчанию в CSS, показываем только после проверки
-        // container.style.display = 'none'; // Это уже не нужно, так как opacity: 0 в CSS
-
-        if (userStatus === 'new' || userStatus === 'not_confirmed') { // Пример статусов
+        if (userStatus === 'new' || userStatus === 'not_confirmed') {
+            logToScreen('Статус пользователя позволяет отобразить основной контент.');
             const data = await fetchAllContent();
 
             section1.textContent = data.text1;
@@ -116,24 +172,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (data.countdownDate) {
                 const targetDate = new Date(data.countdownDate);
+                logToScreen(`Целевая дата для отсчета: ${targetDate.toLocaleString()}`);
                 updateCountdown(targetDate);
                 countdownInterval = setInterval(() => updateCountdown(targetDate), 1000);
             } else {
                 countdownElement.innerHTML = "Дата не загружена.";
+                logToScreen('Дата для отсчета не получена.', true);
             }
 
-            // Показываем контейнер после загрузки данных
-            // container.style.display = 'flex'; // Это тоже не нужно, так как display: flex в CSS
-            container.style.opacity = '1'; // Делаем видимым
+            container.style.opacity = '1';
+            logToScreen('Контейнер сделан видимым.');
         } else if (userStatus === 'confirmed') {
-            // Если пользователь уже подтвердил, показываем другое сообщение
+            logToScreen('Пользователь уже подтвердил участие. Отображаем сообщение.');
             document.body.innerHTML = '<div style="color: white; font-size: 1.5em; text-align: center; padding: 20px;">Вы уже подтвердили свое участие. Спасибо!</div>';
             document.body.style.display = 'flex';
             document.body.style.justifyContent = 'center';
             document.body.style.alignItems = 'center';
             document.body.style.minHeight = '100vh';
         } else {
-            // Обработка других статусов или ошибок
+            logToScreen('Неизвестный статус пользователя или ошибка. Отображаем сообщение об ошибке.', true);
             document.body.innerHTML = '<div style="color: red; font-size: 1.5em; text-align: center; padding: 20px;">Произошла ошибка при загрузке данных. Пожалуйста, попробуйте позже.</div>';
             document.body.style.display = 'flex';
             document.body.style.justifyContent = 'center';
@@ -144,12 +201,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Обработчик нажатия на кнопку "Я приду"
     confirmButton.addEventListener('click', async () => {
+        logToScreen('Нажата кнопка "Я приду".');
         confirmButton.disabled = true;
         confirmButton.textContent = 'Отправка...';
 
         try {
             const initData = TG ? TG.initData : '';
             const userId = TG.initDataUnsafe?.user?.id || 'unknown';
+            logToScreen(`Данные пользователя для /rsvp: userId=${userId}`);
+
+            const requestBody = {
+                telegramUserId: userId,
+                status: 'confirmed'
+            };
+            logToScreen(`Тело запроса для /rsvp: ${JSON.stringify(requestBody, null, 2)}`);
 
             const response = await fetch(`${API_BASE_URL}/rsvp`, {
                 method: 'POST',
@@ -157,32 +222,31 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json',
                     'X-Telegram-Init-Data': initData
                 },
-                body: JSON.stringify({
-                    telegramUserId: userId,
-                    status: 'confirmed'
-                })
+                body: JSON.stringify(requestBody)
             });
 
+            logToScreen(`Ответ от /rsvp. Статус: ${response.status}`);
             if (response.ok) {
                 confirmButton.textContent = 'Подтверждено!';
                 confirmButton.style.background = 'linear-gradient(45deg, #28a745, #218838)';
-                // После подтверждения можно обновить статус или закрыть приложение
+                logToScreen('Участие успешно подтверждено.');
                 // TG.close();
             } else {
                 const errorText = await response.text();
                 confirmButton.textContent = 'Ошибка!';
                 confirmButton.style.background = 'linear-gradient(45deg, #dc3545, #c82333)';
-                console.error('Ошибка подтверждения:', errorText);
+                logToScreen(`Ошибка подтверждения: ${errorText}`, true);
             }
         } catch (error) {
             confirmButton.textContent = 'Ошибка сети!';
             confirmButton.style.background = 'linear-gradient(45deg, #dc3545, #c82333)';
-            console.error('Сетевая ошибка при подтверждении:', error);
+            logToScreen(`Сетевая ошибка при подтверждении: ${error.message}`, true);
         } finally {
             setTimeout(() => {
                 confirmButton.disabled = false;
                 confirmButton.textContent = 'Я приду';
                 confirmButton.style.background = 'linear-gradient(45deg, #00c6ff, #ee00ff)';
+                logToScreen('Кнопка "Я приду" сброшена.');
             }, 3000);
         }
     });
