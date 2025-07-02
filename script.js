@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             logToScreen(`Критическая ошибка при получении всего контента: ${error.message}`, true);
             return {
                 text1: 'Не удалось загрузить текст 1.',
-                countdownDate: null,
+                cooldownDate: null, // Исправлено: ожидаем cooldownDate
                 text3: 'Не удалось загрузить текст 3.'
             };
         }
@@ -228,8 +228,9 @@ document.addEventListener('DOMContentLoaded', () => {
             section1.textContent = data.text1;
             section3.textContent = data.text3;
 
-            if (data.countdownDate) {
-                const targetDate = new Date(data.countdownDate);
+            // Исправлено: используем data.cooldownDate
+            if (data.cooldownDate) {
+                const targetDate = new Date(data.cooldownDate);
                 logToScreen(`Целевая дата для отсчета: ${targetDate.toLocaleString()}`);
                 updateCountdown(targetDate);
                 countdownInterval = setInterval(() => updateCountdown(targetDate), 1000);
