@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchAllContent() {
         try {
             const initData = TG ? TG.initData : '';
+            const user = tg.initDataUnsafe.user;
 
             const response = await fetch(`${API_BASE_URL}/invocation`, {
                 method: 'POST',
@@ -31,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json',
                     'X-Telegram-Init-Data': initData
                 },
-                body: JSON.stringify({TG.initDataUnsafe.user})
+                body: JSON.stringify({user})
             });
 
             if (!response.ok) {
@@ -73,12 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
     async function checkUserStatus() {
         try {
             const initData = TG ? TG.initData : '';
+            const user = tg.initDataUnsafe.user;
             const response = await fetch(`${API_BASE_URL}/user-status`, {
                 method: 'POST',
                 headers: {
                     'X-Telegram-Init-Data': initData
                 },
-                body: JSON.stringify({TG.initDataUnsafe.user})
+                body: JSON.stringify({user})
             });
 
             if (!response.ok) {
