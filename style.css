@@ -112,8 +112,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    width: 40%; /* Уменьшено в 2 раза */
-    max-width: 200px; /* Уменьшена максимальная ширина */
+    width: 30%; /* Уменьшено еще сильнее */
+    max-width: 150px; /* Уменьшена максимальная ширина */
     margin: auto; /* Центрируем по вертикали и горизонтали */
     position: absolute;
     top: 50%;
@@ -230,8 +230,8 @@ body {
     }
 
     .menu-buttons {
-        width: 60%; /* Уменьшено для средних экранов */
-        max-width: 250px;
+        width: 50%; /* Уменьшено для средних экранов */
+        max-width: 200px;
     }
 
     .screen-content {
@@ -264,8 +264,8 @@ body {
     }
 
     .menu-buttons {
-        width: 80%; /* Уменьшено для маленьких экранов */
-        max-width: 200px;
+        width: 70%; /* Уменьшено для маленьких экранов */
+        max-width: 150px;
     }
 
     .screen-content {
