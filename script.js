@@ -180,7 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const statusData = await response.json();
             logToScreen(`Полученные данные от /user-status: ${JSON.stringify(statusData, null, 2)}`);
-            return statusData.status;
+            // Исправлено: обращаемся к statusData.userStatus
+            return statusData.userStatus;
         } catch (error) {
             logToScreen(`Критическая ошибка при проверке статуса пользователя: ${error.message}`, true);
             return 'error';
@@ -219,7 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const userStatus = await checkUserStatus();
         logToScreen(`Полученный статус пользователя: "${userStatus}"`);
 
-        if (userStatus === 'new' || userStatus === 'not_confirmed') { // Пример статусов
+        // Исправлено: используем "NEW" и "NOT_CONFIRMED" в верхнем регистре
+        if (userStatus === 'NEW' || userStatus === 'NOT_CONFIRMED') {
             logToScreen('Статус пользователя позволяет отобразить основной контент.');
             const data = await fetchAllContent();
 
@@ -238,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             container.style.opacity = '1';
             logToScreen('Контейнер сделан видимым.');
-        } else if (userStatus === 'confirmed') {
+        } else if (userStatus === 'CONFIRMED') { // Предполагаем, что подтвержденный статус тоже в верхнем регистре
             logToScreen('Пользователь уже подтвердил участие. Отображаем сообщение.');
             displayMessage('Вы уже подтвердили свое участие. Спасибо!');
         } else {
