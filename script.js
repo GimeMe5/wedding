@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Базовый URL для запросов к бэкенду. Замените на актуальный URL вашего бэкенда.
     const API_BASE_URL = 'https://sovaint.ru:8443/api';
-    const TG = window.Telegram.WebApp
+    const TG = window.Telegram.WebApp; // Сокращение для удобства
 
     // Инициализация Telegram Web App
     if (window.Telegram && TG) {
@@ -24,13 +24,15 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchAllContent() {
         try {
             const initData = TG ? TG.initData : '';
-            const user = tg.initDataUnsafe.user;
+            // Получаем данные пользователя из initDataUnsafe, если они доступны
+            const user = TG.initDataUnsafe?.user;
 
+            // Если бэкенд ожидает POST-запрос с телом для /invocation
             const response = await fetch(`${API_BASE_URL}/invocation`, {
-                method: 'POST',
+                method: 'POST', // Изменено на POST, как в предоставленном коде
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Telegram-Init-Data': initData
+                    'X-Telegram-Init-Data': initData // Используем динамический initData
                 },
                 body: JSON.stringify({user})
             });
@@ -38,12 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 throw new Error(`Ошибка HTTP! Статус: ${response.status}`);
             }
+            // Ожидаем JSON-ответ, содержащий text1, countdownDate и text3
             return await response.json();
         } catch (error) {
             console.error('Ошибка при получении всего контента:', error);
             return {
                 text1: 'Не удалось загрузить текст 1.',
-                countdownDate: null,
+                countdownDate: null, // null, если дата не загружена
                 text3: 'Не удалось загрузить текст 3.'
             };
         }
@@ -74,11 +77,14 @@ document.addEventListener('DOMContentLoaded', () => {
     async function checkUserStatus() {
         try {
             const initData = TG ? TG.initData : '';
-            const user = tg.initDataUnsafe.user;
+            const user = TG.initDataUnsafe?.user; // Исправлено: TG вместо tg
+
+            // Если бэкенд ожидает POST-запрос с телом для /user-status
             const response = await fetch(`${API_BASE_URL}/user-status`, {
                 method: 'POST',
                 headers: {
-                    'X-Telegram-Init-Data': initData
+                    'Content-Type': 'application/json',
+                    'X-Telegram-Init-Data': initData // Используем динамический initData
                 },
                 body: JSON.stringify({user})
             });
@@ -91,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return statusData.status;
         } catch (error) {
             console.error('Ошибка при проверке статуса пользователя:', error);
-            // В случае ошибки, можно считать пользователя "новым" или показать ошибку
             return 'error';
         }
     }
