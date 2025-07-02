@@ -38,6 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
         logToScreen(args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg).join(' '), true);
     };
 
+    // Принудительно показываем отладочный блок при загрузке
+    if (debugOutput) {
+        debugOutput.classList.add('active');
+        logToScreen('Отладочный блок активирован.');
+    }
+
 
     // Инициализация Telegram Web App
     if (window.Telegram && TG) {
@@ -161,9 +167,9 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadAndDisplayContent() {
         logToScreen('Запуск loadAndDisplayContent...');
         const userStatus = await checkUserStatus();
-        logToScreen(`Полученный статус пользователя: ${userStatus}`);
+        logToScreen(`Полученный статус пользователя: "${userStatus}"`); // Добавил кавычки для ясности
 
-        if (userStatus === 'new' || userStatus === 'not_confirmed') {
+        if (userStatus === 'new' || userStatus === 'not_confirmed') { // Пример статусов
             logToScreen('Статус пользователя позволяет отобразить основной контент.');
             const data = await fetchAllContent();
 
