@@ -4,7 +4,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const section3 = document.getElementById('section3');
     const confirmButton = document.getElementById('confirmButton');
     const container = document.querySelector('.container'); // Получаем основной контейнер
-    const debugOutput = document.getElementById('debug-output'); // Элемент для отладочного вывода
+    let debugOutput = document.getElementById('debug-output'); // Элемент для отладочного вывода
+
+    // Если debugOutput не существует, создаем его динамически
+    if (!debugOutput) {
+        debugOutput = document.createElement('div');
+        debugOutput.id = 'debug-output';
+        document.body.appendChild(debugOutput);
+        // Добавляем базовые стили для динамически созданного блока
+        debugOutput.style.cssText = `
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            max-height: 30vh;
+            background: rgba(0, 0, 0, 0.8);
+            color: limegreen;
+            font-family: monospace;
+            font-size: 0.8em;
+            overflow-y: auto;
+            padding: 10px;
+            box-sizing: border-box;
+            z-index: 9999;
+            display: block; /* Всегда показываем */
+        `;
+    }
 
     let countdownInterval;
 
