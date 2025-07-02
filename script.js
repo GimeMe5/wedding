@@ -163,11 +163,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Функция для отображения сообщения (вместо перезаписи body)
+    function displayMessage(message, isError = false) {
+        if (container) {
+            container.style.display = 'none'; // Скрываем основной контент
+        }
+        const messageDiv = document.createElement('div');
+        messageDiv.style.cssText = `
+            color: ${isError ? 'red' : 'white'};
+            font-size: 1.5em;
+            text-align: center;
+            padding: 20px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 400px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 198, 255, 0.5);
+            z-index: 100;
+        `;
+        messageDiv.textContent = message;
+        document.body.appendChild(messageDiv);
+    }
+
     // Загрузка всего контента и отображение страницы
     async function loadAndDisplayContent() {
         logToScreen('Запуск loadAndDisplayContent...');
         const userStatus = await checkUserStatus();
-        logToScreen(`Полученный статус пользователя: "${userStatus}"`); // Добавил кавычки для ясности
+        logToScreen(`Полученный статус пользователя: "${userStatus}"`);
 
         if (userStatus === 'new' || userStatus === 'not_confirmed') { // Пример статусов
             logToScreen('Статус пользователя позволяет отобразить основной контент.');
@@ -190,18 +216,10 @@ document.addEventListener('DOMContentLoaded', () => {
             logToScreen('Контейнер сделан видимым.');
         } else if (userStatus === 'confirmed') {
             logToScreen('Пользователь уже подтвердил участие. Отображаем сообщение.');
-            document.body.innerHTML = '<div style="color: white; font-size: 1.5em; text-align: center; padding: 20px;">Вы уже подтвердили свое участие. Спасибо!</div>';
-            document.body.style.display = 'flex';
-            document.body.style.justifyContent = 'center';
-            document.body.style.alignItems = 'center';
-            document.body.style.minHeight = '100vh';
+            displayMessage('Вы уже подтвердили свое участие. Спасибо!');
         } else {
             logToScreen('Неизвестный статус пользователя или ошибка. Отображаем сообщение об ошибке.', true);
-            document.body.innerHTML = '<div style="color: red; font-size: 1.5em; text-align: center; padding: 20px;">Произошла ошибка при загрузке данных. Пожалуйста, попробуйте позже.</div>';
-            document.body.style.display = 'flex';
-            document.body.style.justifyContent = 'center';
-            document.body.style.alignItems = 'center';
-            document.body.style.minHeight = '100vh';
+            displayMessage('Произошла ошибка при загрузке данных. Пожалуйста, попробуйте позже.', true);
         }
     }
 
