@@ -7,9 +7,10 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
     <style>
+        /* Стили для отладочного блока, если он не был добавлен в style.css */
         #debug-output {
             position: fixed;
-            bottom: 0;
+            top: 0; /* Перемещено наверх */
             left: 0;
             width: 100%;
             max-height: 30vh;
@@ -30,7 +31,8 @@
 </head>
 <body>
 <div class="container">
-    <div class="content-area">
+    <!-- Основной контент (приглашение, отсчет) -->
+    <div class="content-area" id="main-content-area">
         <div class="content-section" id="section1">
             <!-- Контент из бэкенда для секции 1 -->
             Загрузка...
@@ -60,6 +62,32 @@
         </div>
     </div>
     <button class="action-button" id="confirmButton">Я приду</button>
+
+    <!-- Меню кнопок (скрыто по умолчанию) -->
+    <div class="menu-buttons" id="menu-buttons-area" style="display: none;">
+        <button class="menu-button" id="inviteButton">Приглашение</button>
+        <button class="menu-button" id="rulesButton">Правила</button>
+        <button class="menu-button" id="questButton">Квест</button>
+        <button class="menu-button disabled" id="seatingButton" disabled>Рассадка</button>
+    </div>
+
+    <!-- Экраны для правил и квеста (скрыты по умолчанию) -->
+    <div class="screen" id="rules-screen" style="display: none;">
+        <div class="screen-content">
+            <h2>Правила</h2>
+            <p>Здесь будут правила.</p>
+            <button class="action-button back-button" id="rulesBackButton">Назад</button>
+        </div>
+    </div>
+
+    <div class="screen" id="quest-screen" style="display: none;">
+        <div class="screen-content">
+            <h2>Квест</h2>
+            <p>Здесь будет квест.</p>
+            <button class="action-button back-button" id="questBackButton">Назад</button>
+        </div>
+    </div>
+
 </div>
 <div id="debug-output"></div> <!-- Элемент для вывода отладочной информации -->
 <script src="script.js"></script>

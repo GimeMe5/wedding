@@ -1,8 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const mainContentArea = document.getElementById('main-content-area');
     const section1 = document.getElementById('section1');
     const countdownElement = document.getElementById('countdown');
     const section3 = document.getElementById('section3');
     const confirmButton = document.getElementById('confirmButton');
+    const menuButtonsArea = document.getElementById('menu-buttons-area');
+    const inviteButton = document.getElementById('inviteButton');
+    const rulesButton = document.getElementById('rulesButton');
+    const questButton = document.getElementById('questButton');
+    const seatingButton = document.getElementById('seatingButton');
+    const rulesScreen = document.getElementById('rules-screen');
+    const questScreen = document.getElementById('quest-screen');
+    const rulesBackButton = document.getElementById('rulesBackButton');
+    const questBackButton = document.getElementById('questBackButton');
+
     const container = document.querySelector('.container'); // Получаем основной контейнер
     let debugOutput = document.getElementById('debug-output'); // Элемент для отладочного вывода
 
@@ -14,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Добавляем базовые стили для динамически созданного блока
         debugOutput.style.cssText = `
             position: fixed;
-            bottom: 0;
+            top: 0;
             left: 0;
             width: 100%;
             max-height: 30vh;
@@ -214,13 +225,30 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(messageDiv);
     }
 
+    // Функция для переключения экранов
+    function showScreen(screenId) {
+        // Скрываем все основные экраны
+        mainContentArea.style.display = 'none';
+        confirmButton.style.display = 'none';
+        menuButtonsArea.style.display = 'none';
+        rulesScreen.style.display = 'none';
+        questScreen.style.display = 'none';
+
+        // Показываем нужный экран
+        const screenToShow = document.getElementById(screenId);
+        if (screenToShow) {
+            screenToShow.style.display = 'flex'; // Используем flex для центрирования содержимого
+            screenToShow.style.opacity = '1';
+            screenToShow.style.transition = 'opacity 0.5s ease-in-out';
+        }
+    }
+
     // Загрузка всего контента и отображение страницы
     async function loadAndDisplayContent() {
         logToScreen('Запуск loadAndDisplayContent...');
         const userStatus = await checkUserStatus();
         logToScreen(`Полученный статус пользователя: "${userStatus}"`);
 
-        // Исправлено: используем "NEW" и "NOT_CONFIRMED" в верхнем регистре
         if (userStatus === 'NEW' || userStatus === 'NOT_CONFIRMED') {
             logToScreen('Статус пользователя позволяет отобразить основной контент.');
             const data = await fetchAllContent();
@@ -239,11 +267,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 logToScreen('Дата для отсчета не получена.', true);
             }
 
+            // Показываем основной контент и кнопку "Я приду"
+            showScreen('main-content-area');
+            confirmButton.style.display = 'block'; // Кнопка "Я приду"
             container.style.opacity = '1';
             logToScreen('Контейнер сделан видимым.');
-        } else if (userStatus === 'CONFIRMED') { // Предполагаем, что подтвержденный статус тоже в верхнем регистре
-            logToScreen('Пользователь уже подтвердил участие. Отображаем сообщение.');
-            displayMessage('Вы уже подтвердили свое участие. Спасибо!');
+        } else if (userStatus === 'CONFIRMED') {
+            logToScreen('Пользователь уже подтвердил участие. Отображаем меню кнопок.');
+            showScreen('menu-buttons-area');
+            container.style.opacity = '1'; // Контейнер должен быть виден для меню
         } else {
             logToScreen('Неизвестный статус пользователя или ошибка. Отображаем сообщение об ошибке.', true);
             displayMessage('Произошла ошибка при загрузке данных. Пожалуйста, попробуйте позже.', true);
@@ -280,7 +312,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 confirmButton.textContent = 'Подтверждено!';
                 confirmButton.style.background = 'linear-gradient(45deg, #28a745, #218838)';
-                logToScreen('Участие успешно подтверждено.');
+                logToScreen('Участие успешно подтверждено. Переключаемся на меню.');
+                showScreen('menu-buttons-area'); // Показываем меню после подтверждения
                 // TG.close();
             } else {
                 const errorText = await response.text();
@@ -301,6 +334,43 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 3000);
         }
     });
+
+    // Обработчики для кнопок меню
+    inviteButton.addEventListener('click', () => {
+        logToScreen('Нажата кнопка "Приглашение".');
+        // Здесь можно реализовать переход на страницу приглашения или модальное окно
+        // Например, можно снова вызвать fetchAllContent и отобразить только текст приглашения
+        // Для примера, просто логируем
+        logToScreen('Открываем приглашение (пока заглушка).');
+        // showScreen('main-content-area'); // Можно вернуться к основному экрану, если приглашение там
+    });
+
+    rulesButton.addEventListener('click', () => {
+        logToScreen('Нажата кнопка "Правила".');
+        showScreen('rules-screen');
+    });
+
+    questButton.addEventListener('click', () => {
+        logToScreen('Нажата кнопка "Квест".');
+        showScreen('quest-screen');
+    });
+
+    seatingButton.addEventListener('click', () => {
+        logToScreen('Нажата кнопка "Рассадка" (неактивна).');
+        // Эта кнопка неактивна, но обработчик на всякий случай
+    });
+
+    // Обработчики для кнопок "Назад"
+    rulesBackButton.addEventListener('click', () => {
+        logToScreen('Нажата кнопка "Назад" на экране правил.');
+        showScreen('menu-buttons-area');
+    });
+
+    questBackButton.addEventListener('click', () => {
+        logToScreen('Нажата кнопка "Назад" на экране квеста.');
+        showScreen('menu-buttons-area');
+    });
+
 
     // Запускаем проверку статуса и загрузку контента
     loadAndDisplayContent();
