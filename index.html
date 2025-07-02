@@ -2,66 +2,44 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Wedding Invite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Свадебное Мини-Приложение</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="overlay"></div>
-
-<div class="card">
-    <h2 id="greeting">Привет!</h2>
-    <p>Мы приглашаем тебя на нашу свадьбу 🎉</p>
-    <p>До начала осталось:</p>
-    <div class="timer" id="countdown">--:--:--</div>
-    <button onclick="confirmAttendance()">Я приду</button>
+<div class="container">
+    <div class="content-area">
+        <div class="content-section" id="section1">
+            <!-- Контент из бэкенда для секции 1 -->
+            Загрузка...
+        </div>
+        <div class="content-section countdown-section" id="countdown">
+            <!-- Таймер обратного отсчета -->
+            <div class="countdown-item">
+                <span id="days">00</span>
+                <div class="label">Дни</div>
+            </div>
+            <div class="countdown-item">
+                <span id="hours">00</span>
+                <div class="label">Часы</div>
+            </div>
+            <div class="countdown-item">
+                <span id="minutes">00</span>
+                <div class="label">Минуты</div>
+            </div>
+            <div class="countdown-item">
+                <span id="seconds">00</span>
+                <div class="label">Секунды</div>
+            </div>
+        </div>
+        <div class="content-section" id="section3">
+            <!-- Контент из бэкенда для секции 3 -->
+            Загрузка...
+        </div>
+    </div>
+    <button class="action-button" id="confirmButton">Я приду</button>
 </div>
-
-<script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
-
-    const user = tg.initDataUnsafe.user;
-    document.getElementById("greeting").textContent = `Дорогой(ая) ${user?.first_name || "гость"},`;
-
-    function confirmAttendance() {
-        fetch("https://sovaint.ru:8443/api/rsvp", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Telegram-InitData": tg.initData
-            },
-            body: JSON.stringify({user})
-        });
-        tg.showPopup({message: "Спасибо! Ждём тебя 🎊"});
-    }
-
-    const deadline = new Date("2025-08-14T15:00:00+03:00");
-
-    function updateCountdown() {
-        const now = new Date();
-        const diff = deadline - now;
-        const timerEl = document.getElementById("countdown");
-
-        if (diff <= 0) {
-            timerEl.textContent = "⏳ Свадьба уже началась!";
-            return;
-        }
-
-        const seconds = Math.floor(diff / 1000) % 60;
-        const minutes = Math.floor(diff / (1000 * 60)) % 60;
-        const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-        timerEl.textContent = `${days} дней ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-    }
-
-    function pad(n) {
-        return n.toString().padStart(2, '0');
-    }
-
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
-</script>
+<script src="script.js"></script>
 </body>
 </html>
