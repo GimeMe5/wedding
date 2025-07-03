@@ -138,8 +138,8 @@ body {
     text-transform: uppercase;
     letter-spacing: 1px;
     text-align: center;
-    white-space: normal; /* Разрешаем перенос строк */
-    word-wrap: break-word; /* Страхуемся */
+    /*white-space: normal; !* Разрешаем перенос строк *!*/
+    /*word-wrap: break-word; !* Страхуемся *!*/
 }
 
 .menu-button:hover {
