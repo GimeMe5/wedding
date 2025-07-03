@@ -282,8 +282,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function resetConfirmButton() {
+        confirmButton.textContent = 'Я приду';
+        confirmButton.style.background = 'linear-gradient(45deg, #00c6ff, #ee00ff)';
+        confirmButton.onclick = confirmParticipation;
+    }
+
     // Обработчик нажатия на кнопку "Я приду"
-    confirmButton.addEventListener('click', async () => {
+    confirmButton.onclick = confirmParticipation;
+
+    async function confirmParticipation() {
         logToScreen('Нажата кнопка "Я приду".');
         confirmButton.disabled = true;
         confirmButton.textContent = 'Отправка...';
@@ -313,8 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 confirmButton.textContent = 'Подтверждено!';
                 confirmButton.style.background = 'linear-gradient(45deg, #28a745, #218838)';
                 logToScreen('Участие успешно подтверждено. Переключаемся на меню.');
-                showScreen('menu-buttons-area'); // Показываем меню после подтверждения
-                // TG.close();
+                showScreen('menu-buttons-area');
             } else {
                 const errorText = await response.text();
                 confirmButton.textContent = 'Ошибка!';
@@ -327,13 +334,11 @@ document.addEventListener('DOMContentLoaded', () => {
             logToScreen(`Сетевая ошибка при подтверждении: ${error.message}`, true);
         } finally {
             setTimeout(() => {
-                confirmButton.disabled = false;
-                confirmButton.textContent = 'Я приду';
-                confirmButton.style.background = 'linear-gradient(45deg, #00c6ff, #ee00ff)';
-                logToScreen('Кнопка "Я приду" сброшена.');
+                resetConfirmButton();
             }, 3000);
         }
-    });
+    }
+
 
     // Обработчики для кнопок меню
     inviteButton.addEventListener('click', () => {
