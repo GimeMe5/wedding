@@ -341,24 +341,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // Обработчики для кнопок меню
-    inviteButton.addEventListener('click', () => {
-        logToScreen('Нажата кнопка "Приглашение".');
+    inviteButton.addEventListener('click', async () => {
+        logToScreen('Нажата кнопка "Приглашение". Перезагружаем контент...');
         showScreen('main-content-area');
 
-        // Меняем поведение и текст кнопки
+        // Очищаем предыдущий таймер, если он был
+        if (countdownInterval) {
+            clearInterval(countdownInterval);
+        }
+
+        const data = await fetchAllContent();
+
+        section1.textContent = data.text1;
+        section3.textContent = data.text3;
+
+        if (data.cooldownDate) {
+            const targetDate = new Date(data.cooldownDate);
+            logToScreen(`Целевая дата для отсчета (повторный вызов): ${targetDate.toLocaleString()}`);
+            updateCountdown(targetDate);
+            countdownInterval = setInterval(() => updateCountdown(targetDate), 1000);
+        } else {
+            countdownElement.innerHTML = "Дата не загружена.";
+            logToScreen('Дата для отсчета не получена (повторный вызов).', true);
+        }
+
+        // Настраиваем кнопку как "Назад"
         confirmButton.textContent = 'Назад';
         confirmButton.style.display = 'block';
         confirmButton.disabled = false;
-
-        // Временно назначаем поведение "Назад"
         confirmButton.onclick = () => {
-            logToScreen('Назад из приглашения.');
             showScreen('menu-buttons-area');
-
-            // Восстанавливаем поведение "Я приду"
             resetConfirmButton();
         };
     });
+
+
 
     rulesButton.addEventListener('click', () => {
         logToScreen('Нажата кнопка "Правила".');

@@ -130,7 +130,7 @@ body {
     border-radius: 10px;
     color: white;
     padding: 18px 25px; /* Было 15px 20px → увеличено */
-    font-size: 1.15em; /* Немного увеличим */
+    font-size: 1em; /* Немного увеличим */
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
