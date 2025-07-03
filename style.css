@@ -129,14 +129,17 @@ body {
     border: none;
     border-radius: 10px;
     color: white;
-    padding: 15px 20px;
-    font-size: 1.1em;
+    padding: 18px 25px; /* Было 15px 20px → увеличено */
+    font-size: 1.15em; /* Немного увеличим */
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 0 15px rgba(0, 198, 255, 0.4);
     text-transform: uppercase;
     letter-spacing: 1px;
+    text-align: center;
+    white-space: normal; /* Разрешаем перенос строк */
+    word-wrap: break-word; /* Страхуемся */
 }
 
 .menu-button:hover {
@@ -230,8 +233,8 @@ body {
     }
 
     .menu-buttons {
-        width: 50%; /* Уменьшено для средних экранов */
-        max-width: 200px;
+        width: 35%; /* Было 30% */
+        max-width: 180px; /* Было 150px */
     }
 
     .screen-content {

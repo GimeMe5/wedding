@@ -338,11 +338,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Обработчики для кнопок меню
     inviteButton.addEventListener('click', () => {
         logToScreen('Нажата кнопка "Приглашение".');
-        // Здесь можно реализовать переход на страницу приглашения или модальное окно
-        // Например, можно снова вызвать fetchAllContent и отобразить только текст приглашения
-        // Для примера, просто логируем
-        logToScreen('Открываем приглашение (пока заглушка).');
-        // showScreen('main-content-area'); // Можно вернуться к основному экрану, если приглашение там
+        showScreen('main-content-area');
+
+        // Меняем поведение и текст кнопки
+        confirmButton.textContent = 'Назад';
+        confirmButton.style.display = 'block';
+        confirmButton.disabled = false;
+
+        // Временно назначаем поведение "Назад"
+        confirmButton.onclick = () => {
+            logToScreen('Назад из приглашения.');
+            showScreen('menu-buttons-area');
+
+            // Восстанавливаем поведение "Я приду"
+            resetConfirmButton();
+        };
     });
 
     rulesButton.addEventListener('click', () => {
