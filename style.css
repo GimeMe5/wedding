@@ -112,7 +112,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    width: 40%; /* Уменьшено еще сильнее */
+    width: 45%; /* Уменьшено еще сильнее */
     max-width: 150px; /* Уменьшена максимальная ширина */
     margin: auto; /* Центрируем по вертикали и горизонтали */
     position: absolute;
