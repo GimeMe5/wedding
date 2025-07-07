@@ -114,9 +114,20 @@ async function loadNextQuestionForQuiz() {
 export async function handleSubmitQuizAnswer() {
     const answer = quizAnswerInput.value.trim();
     if (answer) {
+        // Получаем результат, который включает только { status: true/false }
         const result = await submitQuizAnswerRequest(answer);
-        showPopup(result.message);
-        // Логика перехода к следующему вопросу обрабатывается в popupOkButton
+
+        let messageToDisplay = '';
+        if (result.status) {
+            messageToDisplay = 'Правильно! Отличный ответ!';
+        } else {
+            messageToDisplay = 'Неверно. Попробуйте еще раз.';
+        }
+
+        // Передаём сформированное сообщение в попап
+        showPopup(messageToDisplay);
+
+        // Логика перехода к следующему вопросу будет в handlePopupOk
     } else {
         showPopup('Пожалуйста, введите ваш ответ.');
     }
