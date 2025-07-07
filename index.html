@@ -6,39 +6,14 @@
     <title>Свадебное Мини-Приложение</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Стили для отладочного блока, если он не был добавлен в style.css */
-        #debug-output {
-            position: fixed;
-            top: 0; /* Перемещено наверх */
-            left: 0;
-            width: 100%;
-            max-height: 30vh;
-            background: rgba(0, 0, 0, 0.8);
-            color: limegreen;
-            font-family: monospace;
-            font-size: 0.8em;
-            overflow-y: auto;
-            padding: 10px;
-            box-sizing: border-box;
-            z-index: 9999;
-            display: none; /* Скрываем по умолчанию, можно показать для отладки */
-        }
-        #debug-output.active {
-            display: block;
-        }
-    </style>
 </head>
 <body>
 <div class="container">
-    <!-- Основной контент (приглашение, отсчет) -->
     <div class="content-area" id="main-content-area">
         <div class="content-section" id="section1">
-            <!-- Контент из бэкенда для секции 1 -->
             Загрузка...
         </div>
         <div class="content-section countdown-section" id="countdown">
-            <!-- Таймер обратного отсчета -->
             <div class="countdown-item">
                 <span id="days">00</span>
                 <div class="label">Дни</div>
@@ -57,13 +32,11 @@
             </div>
         </div>
         <div class="content-section" id="section3">
-            <!-- Контент из бэкенда для секции 3 -->
             Загрузка...
         </div>
     </div>
     <button class="action-button" id="confirmButton">Я приду</button>
 
-    <!-- Меню кнопок (скрыто по умолчанию) -->
     <div class="menu-buttons" id="menu-buttons-area" style="display: none;">
         <button class="menu-button" id="inviteButton">Приглашение</button>
         <button class="menu-button" id="rulesButton">Правила</button>
@@ -71,7 +44,6 @@
         <button class="menu-button disabled" id="seatingButton" disabled>Рассадка</button>
     </div>
 
-    <!-- Экраны для правил и квеста (скрыты по умолчанию) -->
     <div class="screen" id="rules-screen" style="display: none;">
         <div class="screen-content">
             <h2>Правила</h2>
@@ -83,13 +55,43 @@
     <div class="screen" id="quest-screen" style="display: none;">
         <div class="screen-content">
             <h2>Квест</h2>
-            <p>Здесь будет квест.</p>
+            <div class="quest-menu-buttons">
+                <button class="menu-button" id="tasksButton">Задания</button>
+                <button class="menu-button" id="quizButton">Квиз</button>
+            </div>
             <button class="action-button back-button" id="questBackButton">Назад</button>
         </div>
     </div>
 
+    <div class="screen" id="tasks-screen" style="display: none;">
+        <div class="screen-content">
+            <h2>Задания</h2>
+            <p>Здесь будут задания. Пока в разработке!</p>
+            <button class="action-button back-button" id="tasksBackButton">Назад</button>
+        </div>
+    </div>
+
+    <div class="screen" id="quiz-screen" style="display: none;">
+        <div class="screen-content">
+            <h2 id="quizQuestion">Загрузка вопроса...</h2>
+            <input type="text" id="quizAnswerInput" placeholder="Ваш ответ" class="quiz-input">
+            <button class="action-button" id="submitQuizAnswer">Отправить ответ</button>
+            <button class="action-button back-button" id="quizBackButton">Назад</button>
+        </div>
+    </div>
+
+    <div id="popup-message" class="popup" style="display: none;">
+        <div class="popup-content">
+            <p id="popupText"></p>
+            <button class="action-button" id="popupOkButton">ОК</button>
+        </div>
+    </div>
+
 </div>
-<div id="debug-output"></div> <!-- Элемент для вывода отладочной информации -->
-<script src="script.js"></script>
+<div id="debug-output"></div> <script src="js/debug.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/api.js"></script>
+<script src="js/handlers.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
