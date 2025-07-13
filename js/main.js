@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await fetchAllContent();
 
             section1.textContent = data.text1;
-            section3.textContent = data.text3;
+            section3.textContent = data.text2;
 
             if (data.cooldownDate) {
                 const targetDate = new Date(data.cooldownDate);
