@@ -45,7 +45,7 @@ export async function handleInviteButtonClick() {
     const data = await fetchAllContent();
 
     section1.textContent = data.text1;
-    section3.textContent = data.text2;
+    section3.textContent = data.text3;
 
     if (data.cooldownDate) {
         const targetDate = new Date(data.cooldownDate);

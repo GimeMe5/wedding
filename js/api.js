@@ -62,7 +62,7 @@ export async function fetchAllContent() {
         return {
             text1: 'Не удалось загрузить текст 1.',
             cooldownDate: null,
-            text2: 'Не удалось загрузить текст 3.'
+            text3: 'Не удалось загрузить текст 3.'
         };
     }
 }
