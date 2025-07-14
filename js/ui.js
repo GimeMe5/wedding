@@ -14,6 +14,8 @@ const countdownElement = document.getElementById('countdown');
 const container = document.querySelector('.container');
 const popupMessage = document.getElementById('popup-message');
 const popupText = document.getElementById('popupText');
+const tasksIntroText = document.getElementById('tasks-intro-text');
+const tasksListContainer = document.getElementById('tasks-list-container');
 
 
 // Функция для обновления обратного отсчета
@@ -108,4 +110,48 @@ export function showPopup(message) {
 // Функция для скрытия всплывающего окна
 export function hidePopup() {
     popupMessage.style.display = 'none';
+}
+
+// Отображение списка заданий
+export function displayQuestTasks(tasks) {
+    logToScreen('Начинаем отображение заданий...');
+    tasksListContainer.innerHTML = ''; // Очищаем контейнер перед добавлением новых заданий
+
+    if (!tasks || tasks.length === 0) {
+        tasksIntroText.textContent = 'Задания пока недоступны.';
+        logToScreen('Список заданий пуст.', true);
+        return;
+    }
+
+    tasksIntroText.textContent = 'Вот ваши задания:'; // Изменяем текст заглушки
+
+    tasks.forEach(task => {
+        const taskElement = document.createElement('div');
+        taskElement.classList.add('quest-task-item'); // Добавим класс для стилизации
+
+        // Можно добавить дополнительные классы в зависимости от статуса задания
+        if (task.completed) {
+            taskElement.classList.add('completed');
+        }
+
+        const taskTitle = document.createElement('h3');
+        taskTitle.textContent = task.title; // Предполагаем, что у задания есть поле 'title'
+
+        const taskDescription = document.createElement('p');
+        taskDescription.textContent = task.description; // Предполагаем, что у задания есть поле 'description'
+
+        // Если есть статус, можно его тоже отобразить
+        const taskStatus = document.createElement('span');
+        taskStatus.classList.add('task-status');
+        taskStatus.textContent = task.completed ? ' (Выполнено ✅)' : ' (Не выполнено ⏳)';
+
+        taskTitle.appendChild(taskStatus); // Добавляем статус к заголовку
+
+        taskElement.appendChild(taskTitle);
+        taskElement.appendChild(taskDescription);
+
+        tasksListContainer.appendChild(taskElement);
+        logToScreen(`Добавлено задание: ${task.title}`);
+    });
+    logToScreen('Задания успешно отображены.');
 }

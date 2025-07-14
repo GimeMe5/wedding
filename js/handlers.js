@@ -1,6 +1,6 @@
 // js/handlers.js
-import { showScreen, resetConfirmButton, setCountdownInterval, showPopup, hidePopup } from './ui.js';
-import { fetchAllContent, confirmParticipationRequest, fetchNextQuestion, submitQuizAnswerRequest } from './api.js';
+import { showScreen, resetConfirmButton, setCountdownInterval, showPopup, hidePopup, displayQuestTasks } from './ui.js';
+import { fetchAllContent, confirmParticipationRequest, fetchNextQuestion, submitQuizAnswerRequest, fetchQuestTasks } from './api.js';
 import { logToScreen } from './debug.js';
 
 const confirmButton = document.getElementById('confirmButton');
@@ -80,9 +80,14 @@ export function handleQuestButtonClick() {
 }
 
 // Обработчик для кнопки "Задания"
-export function handleTasksButtonClick() {
+export async function handleTasksButtonClick() { // Сделаем функцию асинхронной
     logToScreen('Нажата кнопка "Задания".');
     showScreen('tasks-screen'); // Показываем экран "Задания"
+
+    // НОВЫЙ КОД: Загрузка и отображение заданий
+    logToScreen('Запрашиваем задания квеста...');
+    const tasks = await fetchQuestTasks(); // Вызываем функцию из api.js
+    displayQuestTasks(tasks); // Отображаем полученные задания
 }
 
 // Обработчик для кнопки "Квиз"

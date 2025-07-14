@@ -213,3 +213,33 @@ export async function submitQuizAnswerRequest(answer) {
         submitQuizAnswerButton.textContent = 'Отправить ответ';
     }
 }
+
+export async function fetchQuestTasks() {
+    logToScreen('Запрос списка заданий...');
+    try {
+        const initData = TG ? TG.initData : '';
+        const userPayload = getTelegramUserPayload();
+
+        const response = await fetch(`${API_BASE_URL}/tasks`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Telegram-Init-Data': initData
+            },
+            body: JSON.stringify(userPayload)
+        });
+
+        logToScreen(`Ответ от /tasks. Статус: ${response.status}`);
+        if (!response.ok) {
+            const errorText = await response.text();
+            logToScreen(`Ошибка от /tasks: ${errorText}`, true);
+            throw new Error(`Ошибка HTTP! Статус: ${response.status}. Ответ: ${errorText}`);
+        }
+        const data = await response.json();
+        logToScreen(`Полученные задания: ${JSON.stringify(data, null, 2)}`);
+        return data; // Ожидаем массив объектов QuestTask
+    } catch (error) {
+        logToScreen(`Критическая ошибка при получении заданий: ${error.message}`, true);
+        return []; // Возвращаем пустой массив в случае ошибки
+    }
+}
