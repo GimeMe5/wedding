@@ -129,20 +129,23 @@ export function displayQuestTasks(tasks) {
         const taskElement = document.createElement('div');
         taskElement.classList.add('quest-task-item'); // Добавим класс для стилизации
 
-        // Можно добавить дополнительные классы в зависимости от статуса задания
+        // Добавляем класс, если задание выполнено
         if (task.completed) {
             taskElement.classList.add('completed');
         }
 
         const taskTitle = document.createElement('h3');
-        taskTitle.textContent = task.title; // Предполагаем, что у задания есть поле 'title'
+        // Используем 'command' для заголовка
+        taskTitle.textContent = task.command;
 
         const taskDescription = document.createElement('p');
-        taskDescription.textContent = task.description; // Предполагаем, что у задания есть поле 'description'
+        // Используем 'question' для описания
+        taskDescription.textContent = task.question;
 
         // Если есть статус, можно его тоже отобразить
         const taskStatus = document.createElement('span');
         taskStatus.classList.add('task-status');
+        // Отображаем статус выполнения
         taskStatus.textContent = task.completed ? ' (Выполнено ✅)' : ' (Не выполнено ⏳)';
 
         taskTitle.appendChild(taskStatus); // Добавляем статус к заголовку
@@ -151,7 +154,7 @@ export function displayQuestTasks(tasks) {
         taskElement.appendChild(taskDescription);
 
         tasksListContainer.appendChild(taskElement);
-        logToScreen(`Добавлено задание: ${task.title}`);
+        logToScreen(`Добавлено задание: ${task.command}`);
     });
     logToScreen('Задания успешно отображены.');
 }

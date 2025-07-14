@@ -80,14 +80,14 @@ export function handleQuestButtonClick() {
 }
 
 // Обработчик для кнопки "Задания"
-export async function handleTasksButtonClick() { // Сделаем функцию асинхронной
+export async function handleTasksButtonClick() {
     logToScreen('Нажата кнопка "Задания".');
     showScreen('tasks-screen'); // Показываем экран "Задания"
 
-    // НОВЫЙ КОД: Загрузка и отображение заданий
+    // Загрузка и отображение заданий
     logToScreen('Запрашиваем задания квеста...');
-    const tasks = await fetchQuestTasks(); // Вызываем функцию из api.js
-    displayQuestTasks(tasks); // Отображаем полученные задания
+    const tasks = await fetchQuestTasks(); // Вызываем fetchQuestTasks из api.js
+    displayQuestTasks(tasks); // Передаем полученные задания в displayQuestTasks
 }
 
 // Обработчик для кнопки "Квиз"
