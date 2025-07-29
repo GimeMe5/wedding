@@ -24,9 +24,6 @@ function getTelegramUserPayload() {
         added_to_attachment_menu: user.added_to_attachment_menu || false,
         allows_write_to_pm: user.allows_write_to_pm || false,
         photo_url: user.photo_url || ''
-        // Если вы добавили auth_date или hash в TelegramUser, их можно добавить сюда:
-        // auth_date: TG.initDataUnsafe?.auth_date || null,
-        // hash: TG.initDataUnsafe?.hash || ''
     };
 }
 
@@ -35,7 +32,7 @@ export async function fetchAllContent() {
     logToScreen('Начало запроса fetchAllContent...');
     try {
         const initData = TG ? TG.initData : '';
-        const userPayload = getTelegramUserPayload(); // Используем новую вспомогательную функцию
+        const userPayload = getTelegramUserPayload();
 
         logToScreen(`Тело запроса для /invocation: ${JSON.stringify(userPayload, null, 2)}`);
 
@@ -45,7 +42,7 @@ export async function fetchAllContent() {
                 'Content-Type': 'application/json',
                 'X-Telegram-Init-Data': initData
             },
-            body: JSON.stringify(userPayload) // Отправляем полный объект TelegramUser
+            body: JSON.stringify(userPayload)
         });
 
         logToScreen(`Ответ от /invocation. Статус: ${response.status}`);
@@ -72,7 +69,7 @@ export async function checkUserStatus() {
     logToScreen('Начало запроса checkUserStatus...');
     try {
         const initData = TG ? TG.initData : '';
-        const userPayload = getTelegramUserPayload(); // Используем новую вспомогательную функцию
+        const userPayload = getTelegramUserPayload();
 
         logToScreen(`Тело запроса для /user-status: ${JSON.stringify(userPayload, null, 2)}`);
 
@@ -82,7 +79,7 @@ export async function checkUserStatus() {
                 'Content-Type': 'application/json',
                 'X-Telegram-Init-Data': initData
             },
-            body: JSON.stringify(userPayload) // Отправляем полный объект TelegramUser
+            body: JSON.stringify(userPayload)
         });
 
         logToScreen(`Ответ от /user-status. Статус: ${response.status}`);
@@ -109,8 +106,8 @@ export async function confirmParticipationRequest() {
 
     try {
         const initData = TG ? TG.initData : '';
-        const userPayload = getTelegramUserPayload(); // Используем новую вспомогательную функцию
-        userPayload.status = 'CONFIRMED'; // Добавляем статус к объекту пользователя
+        const userPayload = getTelegramUserPayload();
+        userPayload.status = 'CONFIRMED';
 
         logToScreen(`Тело запроса для /rsvp: ${JSON.stringify(userPayload, null, 2)}`);
 
@@ -120,7 +117,7 @@ export async function confirmParticipationRequest() {
                 'Content-Type': 'application/json',
                 'X-Telegram-Init-Data': initData
             },
-            body: JSON.stringify(userPayload) // Отправляем полный объект TelegramUser со статусом
+            body: JSON.stringify(userPayload)
         });
 
         logToScreen(`Ответ от /rsvp. Статус: ${response.status}`);
@@ -144,12 +141,12 @@ export async function confirmParticipationRequest() {
     }
 }
 
-// Функция для получения следующего вопроса квиза (без изменений)
+// Функция для получения следующего вопроса квиза (ОБНОВЛЕНО)
 export async function fetchNextQuestion() {
     logToScreen('Запрос следующего вопроса квиза...');
     try {
         const initData = TG ? TG.initData : '';
-        const userPayload = getTelegramUserPayload(); // Используем новую вспомогательную функцию
+        const userPayload = getTelegramUserPayload();
 
         const response = await fetch(`${API_BASE_URL}/next-question`, {
             method: 'POST',
@@ -157,7 +154,7 @@ export async function fetchNextQuestion() {
                 'Content-Type': 'application/json',
                 'X-Telegram-Init-Data': initData
             },
-            body: JSON.stringify(userPayload) // Отправляем полный объект TelegramUser
+            body: JSON.stringify(userPayload)
         });
 
         logToScreen(`Ответ от /next-question. Статус: ${response.status}`);
@@ -168,10 +165,12 @@ export async function fetchNextQuestion() {
         }
         const data = await response.json();
         logToScreen(`Полученные данные от /next-question: ${JSON.stringify(data, null, 2)}`);
-        return data; // Ожидаем { question: "...", hasNext: true/false }
+        // Ожидаем { questionText: "...", questionLevel: N, hasNext: true/false }
+        return data;
     } catch (error) {
         logToScreen(`Критическая ошибка при получении вопроса квиза: ${error.message}`, true);
-        return { question: 'Не удалось загрузить вопрос.', hasNext: false };
+        // Важно вернуть поля в ожидаемом формате, даже при ошибке, чтобы избежать ошибок на фронте
+        return { questionText: 'Не удалось загрузить вопрос.', questionLevel: 0, hasNext: false };
     }
 }
 
@@ -183,8 +182,8 @@ export async function submitQuizAnswerRequest(answer) {
     submitQuizAnswerButton.textContent = 'Отправка...';
     try {
         const initData = TG ? TG.initData : '';
-        const userPayload = getTelegramUserPayload(); // Используем новую вспомогательную функцию
-        userPayload.answer = answer; // Добавляем ответ к объекту пользователя
+        const userPayload = getTelegramUserPayload();
+        userPayload.answer = answer;
 
         const response = await fetch(`${API_BASE_URL}/submit-answer`, {
             method: 'POST',
@@ -192,28 +191,29 @@ export async function submitQuizAnswerRequest(answer) {
                 'Content-Type': 'application/json',
                 'X-Telegram-Init-Data': initData
             },
-            body: JSON.stringify(userPayload) // Отправляем полный объект TelegramUser с ответом
+            body: JSON.stringify(userPayload)
         });
 
         logToScreen(`Ответ от /submit-answer. Статус: ${response.status}`);
-        const data = await response.json(); // Ожидаем { correct: true/false, message: "..." }
+        const data = await response.json(); // Ожидаем { status: true/false }
         logToScreen(`Полученные данные от /submit-answer: ${JSON.stringify(data, null, 2)}`);
 
         if (response.ok) {
-            return data;
+            return data; // Вернет { status: true/false }
         } else {
             logToScreen(`Ошибка при отправке ответа: ${data.message || 'Неизвестная ошибка.'}`, true);
-            return { correct: false, message: data.message || 'Произошла ошибка при отправке ответа.' };
+            return { status: false, message: data.message || 'Произошла ошибка при отправке ответа.' };
         }
     } catch (error) {
         logToScreen(`Критическая ошибка при отправке ответа: ${error.message}`, true);
-        return { correct: false, message: 'Сетевая ошибка при отправке ответа.' };
+        return { status: false, message: 'Сетевая ошибка при отправке ответа.' };
     } finally {
         submitQuizAnswerButton.disabled = false;
         submitQuizAnswerButton.textContent = 'Отправить ответ';
     }
 }
 
+// Функция для получения списка заданий квеста (без изменений)
 export async function fetchQuestTasks() {
     logToScreen('Запрос списка заданий...');
     try {
@@ -249,15 +249,15 @@ export async function fetchLeaderboard() {
     logToScreen('Запрос рейтинга лидеров...');
     try {
         const initData = TG ? TG.initData : '';
-        const userPayload = getTelegramUserPayload(); // Пользовательские данные могут быть нужны для фильтрации или аутентификации
+        const userPayload = getTelegramUserPayload();
 
         const response = await fetch(`${API_BASE_URL}/leaderboard`, {
-            method: 'POST', // Используем POST, как и для других запросов
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-Telegram-Init-Data': initData
             },
-            body: JSON.stringify(userPayload) // Отправляем данные пользователя
+            body: JSON.stringify(userPayload)
         });
 
         logToScreen(`Ответ от /leaderboard. Статус: ${response.status}`);
