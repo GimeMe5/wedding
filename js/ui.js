@@ -3,6 +3,7 @@ import { logToScreen } from './debug.js';
 
 let countdownInterval;
 
+// Получаем все элементы один раз при загрузке скрипта
 const mainContentArea = document.getElementById('main-content-area');
 const confirmButton = document.getElementById('confirmButton');
 const menuButtonsArea = document.getElementById('menu-buttons-area');
@@ -12,18 +13,18 @@ const tasksScreen = document.getElementById('tasks-screen');
 const quizScreen = document.getElementById('quiz-screen');
 const countdownElement = document.getElementById('countdown');
 const container = document.querySelector('.container');
-const popupMessage = document.getElementById('popup-message'); // Это основной контейнер всплывающего окна
-const popupText = document.getElementById('popupText'); // Это элемент для текста внутри всплывающего окна
+const popupMessage = document.getElementById('popup-message');
+const popupText = document.getElementById('popupText');
 const tasksIntroText = document.getElementById('tasks-intro-text');
 const tasksListContainer = document.getElementById('tasks-list-container');
 
-// Новые элементы для квиза и рейтинга
-const quizQuestionElement = document.getElementById('quizQuestion'); // Элемент для отображения текста вопроса
-const quizAnswerInput = document.getElementById('quizAnswerInput'); // Элемент для поля ввода ответа
-const submitQuizAnswerButton = document.getElementById('submitQuizAnswer'); // Кнопка отправки ответа
-const quizQuestionSection = document.getElementById('quiz-question-section'); // Секция с вопросом и полем ввода
-const quizLeaderboardSection = document.getElementById('quiz-leaderboard-section'); // Секция с таблицей лидеров
-const leaderboardList = document.getElementById('leaderboard-list'); // Контейнер для таблицы рейтинга
+// Элементы квиза и рейтинга
+const quizQuestionElement = document.getElementById('quizQuestion');
+const quizAnswerInput = document.getElementById('quizAnswerInput');
+const submitQuizAnswerButton = document.getElementById('submitQuizAnswer');
+const quizQuestionSection = document.getElementById('quiz-question-section');
+const quizLeaderboardSection = document.getElementById('quiz-leaderboard-section');
+const leaderboardList = document.getElementById('leaderboard-list');
 
 
 // Функция для обновления обратного отсчета (без изменений)
@@ -36,12 +37,10 @@ export function updateCountdown(targetDate) {
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    // Убедитесь, что элементы существуют, прежде чем пытаться получить textContent
     if (document.getElementById('days')) document.getElementById('days').textContent = String(days).padStart(2, '0');
     if (document.getElementById('hours')) document.getElementById('hours').textContent = String(hours).padStart(2, '0');
     if (document.getElementById('minutes')) document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
     if (document.getElementById('seconds')) document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-
 
     if (distance < 0) {
         clearInterval(countdownInterval);
@@ -61,10 +60,13 @@ export function setCountdownInterval(targetDate) {
 
 // Функция для отображения сообщения (без изменений)
 export function displayMessage(message, isError = false) {
+    // Внимание: Эта функция создает новый элемент. Убедитесь, что он удаляется или управляется.
+    // Если вы используете popup-message, эта функция может быть не нужна.
     if (container) {
-        container.style.display = 'none'; // Скрываем основной контент
+        container.style.display = 'none';
     }
     const messageDiv = document.createElement('div');
+    // Стили в JS: это пример того, чего мы хотим избегать, но тут это вспомогательная функция.
     messageDiv.style.cssText = `
         color: ${isError ? 'red' : 'white'};
         font-size: 1.5em;
@@ -85,31 +87,33 @@ export function displayMessage(message, isError = false) {
     document.body.appendChild(messageDiv);
 }
 
-// Функция для переключения экранов (ОБНОВЛЕНА)
+// Функция для переключения экранов (ОБНОВЛЕНО)
 export function showScreen(screenId) {
     logToScreen(`Переключение на экран: ${screenId}`);
-    // Скрываем все основные экраны
-    mainContentArea.style.display = 'none';
-    confirmButton.style.display = 'none'; // Убедимся, что она скрыта, если не нужна
-    menuButtonsArea.style.display = 'none';
-    rulesScreen.style.display = 'none';
-    questScreen.style.display = 'none';
-    tasksScreen.style.display = 'none';
-    quizScreen.style.display = 'none';
 
-    // Дополнительно скрываем секции квиза по умолчанию
+    // Список всех основных экранов для скрытия
+    const allScreens = [
+        mainContentArea, menuButtonsArea, rulesScreen,
+        questScreen, tasksScreen, quizScreen
+    ];
+
+    // Скрываем все основные экраны
+    allScreens.forEach(screen => {
+        if (screen) {
+            screen.style.display = 'none';
+            screen.style.opacity = '0';
+        }
+    });
+
+    // Дополнительно скрываем секции квиза, если они существуют
     if (quizQuestionSection) quizQuestionSection.style.display = 'none';
     if (quizLeaderboardSection) quizLeaderboardSection.style.display = 'none';
-
 
     // Показываем нужный экран
     const screenToShow = document.getElementById(screenId);
     if (screenToShow) {
-        // Устанавливаем display: flex для основного контейнера экрана
-        // а затем управляем opacity для плавности
-        screenToShow.style.display = 'flex';
-        // setTimeout нужен, чтобы display:flex успел примениться до transition opacity
-        setTimeout(() => {
+        screenToShow.style.display = 'flex'; // Устанавливаем display: flex для основного контейнера экрана
+        setTimeout(() => { // Для плавности
             screenToShow.style.opacity = '1';
         }, 10);
         screenToShow.style.transition = 'opacity 0.5s ease-in-out';
@@ -117,13 +121,17 @@ export function showScreen(screenId) {
         logToScreen(`Элемент с ID ${screenId} не найден для отображения.`, true);
     }
 
-    // Если переключаемся на главный экран с кнопками, показываем confirmButton
-    if (screenId === 'main-content-area') {
-        confirmButton.style.display = 'block'; // Или 'flex', в зависимости от CSS
+    // Специальная логика для confirmButton
+    if (confirmButton) {
+        if (screenId === 'main-content-area') {
+            confirmButton.style.display = 'block'; // Показываем кнопку "Я приду" на главном экране
+        } else {
+            confirmButton.style.display = 'none'; // Скрываем на всех остальных
+        }
     }
 }
 
-// Новая функция для переключения между вопросом и рейтингом в квизе
+// Функция для переключения между вопросом и рейтингом в квизе (ОБНОВЛЕНО)
 export function showQuizSection(section) {
     logToScreen(`Переключение секции квиза на: ${section}`);
     if (quizQuestionSection && quizLeaderboardSection) {
@@ -142,10 +150,11 @@ export function showQuizSection(section) {
 }
 
 export function resetConfirmButton() {
-    confirmButton.textContent = 'Я приду';
-    confirmButton.style.background = 'linear-gradient(45deg, #00c6ff, #ee00ff)';
-    confirmButton.style.display = 'block'; // Убедимся, что кнопка видна
-    // Обработчик будет привязан в handlers.js
+    if (confirmButton) {
+        confirmButton.textContent = 'Я приду';
+        confirmButton.style.background = 'linear-gradient(45deg, #00c6ff, #ee00ff)';
+        confirmButton.style.display = 'block'; // Убедимся, что кнопка видна
+    }
 }
 
 // Функция для показа всплывающего окна (без изменений)
@@ -153,7 +162,6 @@ export function showPopup(message) {
     if (popupText && popupMessage) {
         popupText.textContent = message;
         popupMessage.style.display = 'flex';
-        // Для плавности
         setTimeout(() => {
             popupMessage.style.opacity = '1';
         }, 10);
@@ -169,7 +177,7 @@ export function hidePopup() {
         popupMessage.style.opacity = '0';
         setTimeout(() => {
             popupMessage.style.display = 'none';
-        }, 300); // Соответствует transition-duration в CSS
+        }, 300);
         logToScreen('Всплывающее окно скрыто.');
     }
 }
@@ -181,7 +189,7 @@ export function displayQuestTasks(tasks) {
         logToScreen('Элемент #tasksListContainer не найден.', true);
         return;
     }
-    tasksListContainer.innerHTML = ''; // Очищаем контейнер перед добавлением новых заданий
+    tasksListContainer.innerHTML = '';
 
     if (!tasks || tasks.length === 0) {
         if (tasksIntroText) tasksIntroText.textContent = 'Задания пока недоступны.';
@@ -189,21 +197,21 @@ export function displayQuestTasks(tasks) {
         return;
     }
 
-    if (tasksIntroText) tasksIntroText.textContent = 'Вот ваши задания:'; // Изменяем текст заглушки
+    if (tasksIntroText) tasksIntroText.textContent = 'Вот ваши задания:';
 
     tasks.forEach(task => {
         const taskElement = document.createElement('div');
-        taskElement.classList.add('quest-task-item'); // Добавим класс для стилизации
+        taskElement.classList.add('quest-task-item');
 
         if (task.completed) {
             taskElement.classList.add('completed');
         }
 
         const taskTitle = document.createElement('h3');
-        taskTitle.textContent = task.command; // Используем 'command' для заголовка
+        taskTitle.textContent = task.command;
 
         const taskDescription = document.createElement('p');
-        taskDescription.textContent = task.question; // Используем 'question' для описания
+        taskDescription.textContent = task.question;
 
         const taskStatus = document.createElement('span');
         taskStatus.classList.add('task-status');
@@ -220,17 +228,17 @@ export function displayQuestTasks(tasks) {
     logToScreen('Задания успешно отображены.');
 }
 
-// Новая функция для отображения рейтинга лидеров
+// Функция для отображения рейтинга лидеров (ОБНОВЛЕНО)
 export function displayLeaderboard(leaderboardData) {
     logToScreen('Отображаем рейтинг лидеров...');
     if (!leaderboardList) {
         logToScreen('Элемент #leaderboard-list не найден.', true);
         return;
     }
-    leaderboardList.innerHTML = ''; // Очищаем контейнер
+    leaderboardList.innerHTML = '';
 
     if (!leaderboardData || leaderboardData.length === 0) {
-        leaderboardList.innerHTML = '<p>Рейтинг пока пуст. Будьте первыми!</p>';
+        leaderboardList.innerHTML = '<p style="color: #a0a0ff; text-align: center; padding: 20px;">Рейтинг пока пуст. Будьте первыми!</p>';
         logToScreen('Рейтинг лидеров пуст.');
         return;
     }

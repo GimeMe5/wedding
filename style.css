@@ -235,6 +235,7 @@ body {
     font-size: 1.1em;
     box-shadow: 0 0 10px rgba(0, 198, 255, 0.5);
     outline: none; /* Убираем стандартную обводку при фокусе */
+    text-align: center; /* **ДОБАВЛЕНО** центрирование текста внутри инпута */
 }
 
 .quiz-input:focus {
@@ -298,7 +299,7 @@ body {
     display: block;
 }
 
-/* НОВЫЕ СТИЛИ ДЛЯ ЗАДАНИЙ */
+/* НОВЫЕ СТИЛИ ДЛЯ ЗАДАНИЙ (без изменений) */
 .tasks-instruction-text {
     font-size: 0.9em; /* Чуть меньше основного текста */
     color: #ffcc00; /* Желтоватый цвет для акцента */
@@ -352,20 +353,39 @@ body {
     margin-left: 10px; /* Отступ от заголовка */
 }
 
-/* СТИЛИ ДЛЯ РЕЙТИНГА ЛИДЕРОВ (интегрированные) */
-/* Контейнеры для секций квиза - управляются JS */
-.quiz-section {
-    width: 100%;
-    margin-top: 20px;
-    /* display: none; */ /* Скрывается/показывается JS */
+           /* СТИЛИ ДЛЯ КВИЗА (только что добавленные/изменённые для выравнивания) */
+       .quiz-section {
+           /* Эти стили нужны, чтобы вопрос, инпут и кнопка стояли вертикально */
+           display: flex;
+           flex-direction: column;
+           align-items: center; /* Центрируем по горизонтали */
+           gap: 15px; /* Добавляем отступ между элементами */
+           width: 100%; /* Занимаем всю доступную ширину */
+           /* Убедитесь, что родитель screen-content имеет display: flex и flex-direction: column */
+       }
+
+/* СТИЛИ ДЛЯ РЕЙТИНГА ЛИДЕРОВ (интегрированные, чтобы рейтинг отображался в виде таблицы) */
+.leaderboard-section {
+    /* Эти стили нужны, чтобы рейтинг тоже был вертикальным блоком */
+    display: flex; /* Важно, чтобы JS мог переключать его видимость на 'flex' */
+    flex-direction: column;
+    align-items: center; /* Центрируем по горизонтали */
+    gap: 15px; /* Добавляем отступ между элементами */
+    width: 100%; /* Занимаем всю доступную ширину */
+    /* display: none; */ /* JS будет управлять этим свойством */
 }
 
+#quizQuestion {
+    margin-bottom: 0; /* Отступ теперь контролируется через gap родителя .quiz-section */
+}
+
+/* Таблица рейтинга */
 .leaderboard-table {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
+    border-collapse: collapse; /* Убираем двойные границы */
+    margin-top: 0; /* Отступ теперь контролируется через gap родителя .leaderboard-section */
     color: #e0e0ff; /* Светлый текст, как в остальных частях */
-    background: rgba(0, 0, 0, 0.4); /* Полупропрозрачный темный фон */
+    background: rgba(0, 0, 0, 0.4); /* Полупрозрачный темный фон */
     border-radius: 12px; /* Слегка увеличенные скругленные углы */
     overflow: hidden; /* Важно для применения border-radius к содержимому */
     box-shadow: 0 0 20px rgba(0, 198, 255, 0.3); /* Тонкое свечение */
@@ -385,6 +405,9 @@ body {
     text-shadow: 0 0 5px rgba(0, 198, 255, 0.5);
     text-transform: uppercase;
     font-size: 0.9em;
+    position: sticky; /* **ДОБАВЛЕНО** Фиксируем заголовок таблицы при скролле */
+    top: 0;
+    z-index: 1; /* **ДОБАВЛЕНО** Чтобы заголовок был поверх строк при скролле */
 }
 
 .leaderboard-table tbody tr:nth-child(odd) {
