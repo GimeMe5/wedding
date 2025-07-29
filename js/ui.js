@@ -23,7 +23,7 @@ const quizQuestionElement = document.getElementById('quizQuestion');
 const quizAnswerInput = document.getElementById('quizAnswerInput');
 const submitQuizAnswerButton = document.getElementById('submitQuizAnswer');
 const quizQuestionSection = document.getElementById('quiz-question-section');
-const quizLeaderboardSection = document.getElementById('quiz-leaderboard-section');
+const quizLeaderboardSection = document.getElementById('quiz-leaderboard-section'); // Больше не будет скрываться CSS по умолчанию
 const leaderboardList = document.getElementById('leaderboard-list');
 
 
@@ -58,15 +58,12 @@ export function setCountdownInterval(targetDate) {
     countdownInterval = setInterval(() => updateCountdown(targetDate), 1000);
 }
 
-// Функция для отображения сообщения (без изменений)
+// Функция для отображения сообщения (без изменений, но помним, что она создает новый элемент)
 export function displayMessage(message, isError = false) {
-    // Внимание: Эта функция создает новый элемент. Убедитесь, что он удаляется или управляется.
-    // Если вы используете popup-message, эта функция может быть не нужна.
     if (container) {
         container.style.display = 'none';
     }
     const messageDiv = document.createElement('div');
-    // Стили в JS: это пример того, чего мы хотим избегать, но тут это вспомогательная функция.
     messageDiv.style.cssText = `
         color: ${isError ? 'red' : 'white'};
         font-size: 1.5em;
@@ -87,7 +84,7 @@ export function displayMessage(message, isError = false) {
     document.body.appendChild(messageDiv);
 }
 
-// Функция для переключения экранов (ОБНОВЛЕНО)
+// Функция для переключения экранов (ОБНОВЛЕНО - УДАЛЕНЫ УПОМИНАНИЯ quizQuestionSection и quizLeaderboardSection)
 export function showScreen(screenId) {
     logToScreen(`Переключение на экран: ${screenId}`);
 
@@ -104,10 +101,6 @@ export function showScreen(screenId) {
             screen.style.opacity = '0';
         }
     });
-
-    // Дополнительно скрываем секции квиза, если они существуют
-    if (quizQuestionSection) quizQuestionSection.style.display = 'none';
-    if (quizLeaderboardSection) quizLeaderboardSection.style.display = 'none';
 
     // Показываем нужный экран
     const screenToShow = document.getElementById(screenId);
@@ -131,23 +124,34 @@ export function showScreen(screenId) {
     }
 }
 
-// Функция для переключения между вопросом и рейтингом в квизе (ОБНОВЛЕНО)
-export function showQuizSection(section) {
-    logToScreen(`Переключение секции квиза на: ${section}`);
-    if (quizQuestionSection && quizLeaderboardSection) {
-        if (section === 'question') {
-            quizQuestionSection.style.display = 'flex'; // Используем flex для расположения элементов
-            quizLeaderboardSection.style.display = 'none';
-        } else if (section === 'leaderboard') {
-            quizQuestionSection.style.display = 'none';
-            quizLeaderboardSection.style.display = 'flex'; // Используем flex для расположения элементов
-        } else {
-            logToScreen(`Неизвестная секция квиза: ${section}`, true);
-        }
+// ЭТА ФУНКЦИЯ БОЛЬШЕ НЕ НУЖНА В ТАКОМ ВИДЕ, так как секции видны всегда
+// export function showQuizSection(section) {
+//     logToScreen(`Переключение секции квиза на: ${section}`);
+//     if (quizQuestionSection && quizLeaderboardSection) {
+//         if (section === 'question') {
+//             quizQuestionSection.style.display = 'flex';
+//             quizLeaderboardSection.style.display = 'none';
+//         } else if (section === 'leaderboard') {
+//             quizQuestionSection.style.display = 'none';
+//             quizLeaderboardSection.style.display = 'flex';
+//         } else {
+//             logToScreen(`Неизвестная секция квиза: ${section}`, true);
+//         }
+//     } else {
+//         logToScreen('Не найдены элементы секций квиза (quizQuestionSection или quizLeaderboardSection).', true);
+//     }
+// }
+
+// Добавим функцию для скрытия/показа элементов квиза (вопроса и инпута)
+export function setQuizQuestionVisibility(visible) {
+    if (quizQuestionSection) {
+        quizQuestionSection.style.display = visible ? 'flex' : 'none';
+        logToScreen(`Видимость секции вопроса установлена на: ${visible}`);
     } else {
-        logToScreen('Не найдены элементы секций квиза (quizQuestionSection или quizLeaderboardSection).', true);
+        logToScreen('Элемент quizQuestionSection не найден.', true);
     }
 }
+
 
 export function resetConfirmButton() {
     if (confirmButton) {
@@ -228,7 +232,7 @@ export function displayQuestTasks(tasks) {
     logToScreen('Задания успешно отображены.');
 }
 
-// Функция для отображения рейтинга лидеров (ОБНОВЛЕНО)
+// Функция для отображения рейтинга лидеров (без изменений)
 export function displayLeaderboard(leaderboardData) {
     logToScreen('Отображаем рейтинг лидеров...');
     if (!leaderboardList) {

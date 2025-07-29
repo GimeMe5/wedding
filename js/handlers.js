@@ -1,5 +1,5 @@
 // js/handlers.js
-import { showScreen, resetConfirmButton, setCountdownInterval, showPopup, hidePopup, displayQuestTasks, showQuizSection, displayLeaderboard } from './ui.js';
+import { showScreen, resetConfirmButton, setCountdownInterval, showPopup, hidePopup, displayQuestTasks, setQuizQuestionVisibility, displayLeaderboard } from './ui.js';
 import { fetchAllContent, confirmParticipationRequest, fetchNextQuestion, submitQuizAnswerRequest, fetchQuestTasks, fetchLeaderboard } from './api.js';
 import { logToScreen } from './debug.js';
 
@@ -47,7 +47,7 @@ export async function handleInviteButtonClick() {
     const data = await fetchAllContent();
 
     section1.textContent = data.text1;
-    section3.textContent = data.text2;
+    section3.textContent = data.text3; // Исправлено на text3, если вы имели в виду его, а не text2
 
     if (data.cooldownDate) {
         const targetDate = new Date(data.cooldownDate);
@@ -94,34 +94,36 @@ export async function handleTasksButtonClick() {
 export async function handleQuizButtonClick() {
     logToScreen('Нажата кнопка "Квиз".');
     showScreen('quiz-screen');
-    await loadNextQuestionForQuiz(); // Загружаем первый вопрос или показываем рейтинг
+    await loadQuizContent(); // Новая функция для загрузки всего контента квиза
 }
 
+// НОВАЯ ФУНКЦИЯ: Загрузка контента квиза (вопрос + рейтинг)
+async function loadQuizContent() {
+    logToScreen('Загрузка всего контента квиза (вопрос и рейтинг)...');
 
-// Вспомогательная функция для загрузки вопроса квиза (ОБНОВЛЕН)
-async function loadNextQuestionForQuiz() {
-    logToScreen('Загрузка следующего вопроса для квиза...');
-    const questionData = await fetchNextQuestion(); // Получаем { questionText, questionLevel, hasNext }
+    // 1. Загружаем и отображаем рейтинг
+    const leaderboard = await fetchLeaderboard();
+    displayLeaderboard(leaderboard);
 
-    // Проверяем, есть ли текст вопроса и не является ли он сообщением об ошибке/завершении
+    // 2. Загружаем и отображаем вопрос (если есть)
+    const questionData = await fetchNextQuestion();
+
     if (questionData && questionData.questionText && questionData.questionText !== 'Не удалось загрузить вопрос.' && questionData.hasNext) {
-        showQuizSection('question'); // Убеждаемся, что видна секция вопроса
-        quizQuestionElement.textContent = questionData.questionText; // Используем questionText
+        setQuizQuestionVisibility(true); // Показываем секцию вопроса
+        quizQuestionElement.textContent = questionData.questionText;
         quizAnswerInput.value = ''; // Очищаем поле ввода
         submitQuizAnswerButton.disabled = false;
         submitQuizAnswerButton.textContent = 'Отправить ответ';
     } else {
-        // Если вопросов больше нет или возникла ошибка, показываем рейтинг лидеров
-        logToScreen('Все вопросы квиза пройдены или возникла ошибка. Переключаемся на рейтинг лидеров.');
-        showQuizSection('leaderboard');
-        const leaderboard = await fetchLeaderboard(); // Загружаем данные рейтинга
-        displayLeaderboard(leaderboard); // Отображаем рейтинг
-        submitQuizAnswerButton.disabled = true; // Отключаем кнопку отправки
+        setQuizQuestionVisibility(false); // Скрываем секцию вопроса, если вопросов нет
+        submitQuizAnswerButton.disabled = true;
         submitQuizAnswerButton.textContent = 'Вопросы закончились';
-        // Также можно скрыть поле ввода ответа
-        // quizAnswerInput.style.display = 'none';
+        // Также можно очистить или скрыть поле ввода
+        quizAnswerInput.value = 'Все вопросы пройдены!';
+        quizAnswerInput.disabled = true;
     }
 }
+
 
 // Обработчик для кнопки "Отправить ответ" в квизе (ОБНОВЛЕН)
 export async function handleSubmitQuizAnswer() {
@@ -130,7 +132,6 @@ export async function handleSubmitQuizAnswer() {
         const result = await submitQuizAnswerRequest(answer); // Ожидаем { status: true/false }
 
         let messageToDisplay = '';
-        // В зависимости от `status` формируем сообщение
         if (result.status) {
             messageToDisplay = 'Правильно! Отличный ответ!';
         } else {
@@ -145,11 +146,11 @@ export async function handleSubmitQuizAnswer() {
     }
 }
 
-// Обработчик кнопки "ОК" во всплывающем окне (без изменений в логике, но важно для потока)
+// Обработчик кнопки "ОК" во всплывающем окне (ОБНОВЛЕН)
 export async function handlePopupOk() {
     hidePopup();
-    // После закрытия попапа загружаем следующий вопрос (или рейтинг)
-    await loadNextQuestionForQuiz();
+    // После закрытия попапа, заново загружаем весь контент квиза
+    await loadQuizContent();
 }
 
 // Обработчики для кнопок "Назад" (без изменений)
