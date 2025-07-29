@@ -82,9 +82,20 @@
 
     <div class="screen" id="quiz-screen" style="display: none;">
         <div class="screen-content">
-            <h2 id="quizQuestion">Загрузка вопроса...</h2>
-            <input type="text" id="quizAnswerInput" placeholder="Ваш ответ" class="quiz-input">
-            <button class="action-button" id="submitQuizAnswer">Отправить ответ</button>
+            <h2>Квиз</h2>
+            <div class="quiz-section" id="quiz-question-section">
+                <h3 id="quizQuestion">Загрузка вопроса...</h3>
+                <input type="text" id="quizAnswerInput" placeholder="Ваш ответ" class="quiz-input">
+                <button class="action-button" id="submitQuizAnswer">Отправить ответ</button>
+            </div>
+
+            <div class="leaderboard-section" id="quiz-leaderboard-section" style="display: none;">
+                <h3>Рейтинг Лидеров</h3>
+                <div id="leaderboard-list">
+                    <p>Загрузка рейтинга...</p>
+                </div>
+            </div>
+
             <button class="action-button back-button" id="quizBackButton">Назад</button>
         </div>
     </div>

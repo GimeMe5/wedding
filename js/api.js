@@ -5,7 +5,7 @@ import { logToScreen } from './debug.js';
 const API_BASE_URL = 'https://sovaint.ru:8443/api';
 const TG = window.Telegram.WebApp; // Сокращение для удобства
 
-// Вспомогательная функция для получения данных пользователя
+// Вспомогательная функция для получения данных пользователя (без изменений)
 function getTelegramUserPayload() {
     const user = TG.initDataUnsafe?.user;
     if (!user) {
@@ -30,7 +30,7 @@ function getTelegramUserPayload() {
     };
 }
 
-// Функция для получения всех данных одним запросом
+// Функция для получения всех данных одним запросом (без изменений)
 export async function fetchAllContent() {
     logToScreen('Начало запроса fetchAllContent...');
     try {
@@ -67,7 +67,7 @@ export async function fetchAllContent() {
     }
 }
 
-// Функция для проверки статуса пользователя
+// Функция для проверки статуса пользователя (без изменений)
 export async function checkUserStatus() {
     logToScreen('Начало запроса checkUserStatus...');
     try {
@@ -100,7 +100,7 @@ export async function checkUserStatus() {
     }
 }
 
-// Функция для подтверждения участия
+// Функция для подтверждения участия (без изменений)
 export async function confirmParticipationRequest() {
     const confirmButton = document.getElementById('confirmButton');
     logToScreen('Нажата кнопка "Я приду".');
@@ -144,7 +144,7 @@ export async function confirmParticipationRequest() {
     }
 }
 
-// Функция для получения следующего вопроса квиза
+// Функция для получения следующего вопроса квиза (без изменений)
 export async function fetchNextQuestion() {
     logToScreen('Запрос следующего вопроса квиза...');
     try {
@@ -175,7 +175,7 @@ export async function fetchNextQuestion() {
     }
 }
 
-// Функция для отправки ответа на квиз
+// Функция для отправки ответа на квиз (без изменений)
 export async function submitQuizAnswerRequest(answer) {
     const submitQuizAnswerButton = document.getElementById('submitQuizAnswer');
     logToScreen(`Отправка ответа на квиз: "${answer}"`);
@@ -240,6 +240,37 @@ export async function fetchQuestTasks() {
         return data; // Ожидаем массив объектов QuestTask
     } catch (error) {
         logToScreen(`Критическая ошибка при получении заданий: ${error.message}`, true);
+        return []; // Возвращаем пустой массив в случае ошибки
+    }
+}
+
+// Новая функция: запрос рейтинга лидеров
+export async function fetchLeaderboard() {
+    logToScreen('Запрос рейтинга лидеров...');
+    try {
+        const initData = TG ? TG.initData : '';
+        const userPayload = getTelegramUserPayload(); // Пользовательские данные могут быть нужны для фильтрации или аутентификации
+
+        const response = await fetch(`${API_BASE_URL}/leaderboard`, {
+            method: 'POST', // Используем POST, как и для других запросов
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Telegram-Init-Data': initData
+            },
+            body: JSON.stringify(userPayload) // Отправляем данные пользователя
+        });
+
+        logToScreen(`Ответ от /leaderboard. Статус: ${response.status}`);
+        if (!response.ok) {
+            const errorText = await response.text();
+            logToScreen(`Ошибка от /leaderboard: ${errorText}`, true);
+            throw new Error(`Ошибка HTTP! Статус: ${response.status}. Ответ: ${errorText}`);
+        }
+        const data = await response.json();
+        logToScreen(`Полученные данные рейтинга: ${JSON.stringify(data, null, 2)}`);
+        return data; // Ожидаем массив объектов { name: "...", level: ... }
+    } catch (error) {
+        logToScreen(`Критическая ошибка при получении рейтинга лидеров: ${error.message}`, true);
         return []; // Возвращаем пустой массив в случае ошибки
     }
 }

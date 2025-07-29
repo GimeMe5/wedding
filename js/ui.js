@@ -17,8 +17,13 @@ const popupText = document.getElementById('popupText');
 const tasksIntroText = document.getElementById('tasks-intro-text');
 const tasksListContainer = document.getElementById('tasks-list-container');
 
+// Новые элементы для квиза и рейтинга
+const quizQuestionSection = document.getElementById('quiz-question-section');
+const quizLeaderboardSection = document.getElementById('quiz-leaderboard-section');
+const leaderboardList = document.getElementById('leaderboard-list');
 
-// Функция для обновления обратного отсчета
+
+// Функция для обновления обратного отсчета (без изменений)
 export function updateCountdown(targetDate) {
     const now = new Date().getTime();
     const distance = targetDate - now;
@@ -40,7 +45,7 @@ export function updateCountdown(targetDate) {
     }
 }
 
-// Функция для установки и очистки интервала обратного отсчета
+// Функция для установки и очистки интервала обратного отсчета (без изменений)
 export function setCountdownInterval(targetDate) {
     if (countdownInterval) {
         clearInterval(countdownInterval);
@@ -49,7 +54,7 @@ export function setCountdownInterval(targetDate) {
     countdownInterval = setInterval(() => updateCountdown(targetDate), 1000);
 }
 
-// Функция для отображения сообщения (вместо перезаписи body)
+// Функция для отображения сообщения (без изменений)
 export function displayMessage(message, isError = false) {
     if (container) {
         container.style.display = 'none'; // Скрываем основной контент
@@ -75,7 +80,7 @@ export function displayMessage(message, isError = false) {
     document.body.appendChild(messageDiv);
 }
 
-// Функция для переключения экранов
+// Функция для переключения экранов (обновим, чтобы учитывать секции квиза)
 export function showScreen(screenId) {
     // Скрываем все основные экраны
     mainContentArea.style.display = 'none';
@@ -86,6 +91,11 @@ export function showScreen(screenId) {
     tasksScreen.style.display = 'none';
     quizScreen.style.display = 'none';
 
+    // Дополнительно скрываем секции квиза по умолчанию, если они существуют
+    if (quizQuestionSection) quizQuestionSection.style.display = 'none';
+    if (quizLeaderboardSection) quizLeaderboardSection.style.display = 'none';
+
+
     // Показываем нужный экран
     const screenToShow = document.getElementById(screenId);
     if (screenToShow) {
@@ -95,24 +105,36 @@ export function showScreen(screenId) {
     }
 }
 
+// Новая функция для переключения между вопросом и рейтингом в квизе
+export function showQuizSection(section) {
+    if (section === 'question') {
+        quizQuestionSection.style.display = 'block'; // Или 'flex' в зависимости от стилей
+        quizLeaderboardSection.style.display = 'none';
+    } else if (section === 'leaderboard') {
+        quizQuestionSection.style.display = 'none';
+        quizLeaderboardSection.style.display = 'block'; // Или 'flex'
+    }
+}
+
+
 export function resetConfirmButton() {
     confirmButton.textContent = 'Я приду';
     confirmButton.style.background = 'linear-gradient(45deg, #00c6ff, #ee00ff)';
     // Обработчик будет привязан в handlers.js
 }
 
-// Функция для показа всплывающего окна
+// Функция для показа всплывающего окна (без изменений)
 export function showPopup(message) {
     popupText.textContent = message;
     popupMessage.style.display = 'flex';
 }
 
-// Функция для скрытия всплывающего окна
+// Функция для скрытия всплывающего окна (без изменений)
 export function hidePopup() {
     popupMessage.style.display = 'none';
 }
 
-// Отображение списка заданий
+// Отображение списка заданий (без изменений)
 export function displayQuestTasks(tasks) {
     logToScreen('Начинаем отображение заданий...');
     tasksListContainer.innerHTML = ''; // Очищаем контейнер перед добавлением новых заданий
@@ -157,4 +179,44 @@ export function displayQuestTasks(tasks) {
         logToScreen(`Добавлено задание: ${task.command}`);
     });
     logToScreen('Задания успешно отображены.');
+}
+
+// Новая функция для отображения рейтинга лидеров
+export function displayLeaderboard(leaderboardData) {
+    logToScreen('Отображаем рейтинг лидеров...');
+    leaderboardList.innerHTML = ''; // Очищаем контейнер
+
+    if (!leaderboardData || leaderboardData.length === 0) {
+        leaderboardList.innerHTML = '<p>Рейтинг пока пуст. Будьте первыми!</p>';
+        logToScreen('Рейтинг лидеров пуст.');
+        return;
+    }
+
+    const table = document.createElement('table');
+    table.classList.add('leaderboard-table');
+    table.innerHTML = `
+        <thead>
+            <tr>
+                <th>Место</th>
+                <th>Имя</th>
+                <th>Уровень</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    `;
+    const tbody = table.querySelector('tbody');
+
+    leaderboardData.forEach((player, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${player.name}</td>
+            <td>${player.level}</td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    leaderboardList.appendChild(table);
+    logToScreen('Рейтинг лидеров успешно отображен.');
 }

@@ -352,7 +352,58 @@ body {
     margin-left: 10px; /* Отступ от заголовка */
 }
 
-/* Адаптивные настройки */
+/* СТИЛИ ДЛЯ РЕЙТИНГА ЛИДЕРОВ (интегрированные) */
+/* Контейнеры для секций квиза - управляются JS */
+.quiz-section {
+    width: 100%;
+    margin-top: 20px;
+    /* display: none; */ /* Скрывается/показывается JS */
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    color: #e0e0ff; /* Светлый текст, как в остальных частях */
+    background: rgba(0, 0, 0, 0.4); /* Полупропрозрачный темный фон */
+    border-radius: 12px; /* Слегка увеличенные скругленные углы */
+    overflow: hidden; /* Важно для применения border-radius к содержимому */
+    box-shadow: 0 0 20px rgba(0, 198, 255, 0.3); /* Тонкое свечение */
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+    padding: 12px 15px; /* Увеличенные отступы */
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15); /* Чуть более заметный разделитель */
+}
+
+.leaderboard-table th {
+    background: linear-gradient(90deg, rgba(0, 198, 255, 0.2), rgba(238, 0, 255, 0.2)); /* Градиент для заголовка */
+    font-weight: bold;
+    color: #00c6ff; /* Цвет заголовков, чтобы соответствовал акцентам */
+    text-shadow: 0 0 5px rgba(0, 198, 255, 0.5);
+    text-transform: uppercase;
+    font-size: 0.9em;
+}
+
+.leaderboard-table tbody tr:nth-child(odd) {
+    background: rgba(0, 0, 0, 0.3); /* Чередующийся фон для строк */
+}
+
+.leaderboard-table tbody tr:hover {
+    background: rgba(0, 198, 255, 0.15); /* Эффект при наведении */
+    transform: scale(1.01); /* Легкое увеличение при наведении */
+    transition: all 0.2s ease;
+}
+
+.leaderboard-table td:first-child {
+    font-weight: bold; /* Место жирным */
+    color: #ffcc00; /* Золотистый цвет для места */
+}
+
+
+/* Адаптивные настройки (обновленные) */
 @media (max-width: 768px) {
     .content-area {
         width: 70%; /* Увеличиваем для средних экранов */
@@ -387,6 +438,13 @@ body {
 
     .quest-task-item p {
         font-size: 0.8em;
+    }
+
+    /* Адаптивные стили для таблицы рейтинга на средних экранах */
+    .leaderboard-table th,
+    .leaderboard-table td {
+        padding: 10px 12px;
+        font-size: 0.9em;
     }
 }
 
@@ -430,5 +488,16 @@ body {
 
     .quest-task-item p {
         font-size: 0.75em;
+    }
+
+    /* Адаптивные стили для таблицы рейтинга на маленьких экранах */
+    .leaderboard-table th,
+    .leaderboard-table td {
+        padding: 8px 10px;
+        font-size: 0.8em;
+    }
+    .leaderboard-table th:nth-child(2), /* Скрываем "Имя" для экономии места на очень маленьких экранах */
+    .leaderboard-table td:nth-child(2) {
+        /* display: none; */ /* Если нужно совсем скрыть */
     }
 }
