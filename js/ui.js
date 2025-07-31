@@ -124,24 +124,6 @@ export function showScreen(screenId) {
     }
 }
 
-// ЭТА ФУНКЦИЯ БОЛЬШЕ НЕ НУЖНА В ТАКОМ ВИДЕ, так как секции видны всегда
-// export function showQuizSection(section) {
-//     logToScreen(`Переключение секции квиза на: ${section}`);
-//     if (quizQuestionSection && quizLeaderboardSection) {
-//         if (section === 'question') {
-//             quizQuestionSection.style.display = 'flex';
-//             quizLeaderboardSection.style.display = 'none';
-//         } else if (section === 'leaderboard') {
-//             quizQuestionSection.style.display = 'none';
-//             quizLeaderboardSection.style.display = 'flex';
-//         } else {
-//             logToScreen(`Неизвестная секция квиза: ${section}`, true);
-//         }
-//     } else {
-//         logToScreen('Не найдены элементы секций квиза (quizQuestionSection или quizLeaderboardSection).', true);
-//     }
-// }
-
 // Добавим функцию для скрытия/показа элементов квиза (вопроса и инпута)
 export function setQuizQuestionVisibility(visible) {
     if (quizQuestionSection) {

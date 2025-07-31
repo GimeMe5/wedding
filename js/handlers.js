@@ -47,7 +47,7 @@ export async function handleInviteButtonClick() {
     const data = await fetchAllContent();
 
     section1.textContent = data.text1;
-    section3.textContent = data.text3; // Исправлено на text3, если вы имели в виду его, а не text2
+    section3.textContent = data.text2;
 
     if (data.cooldownDate) {
         const targetDate = new Date(data.cooldownDate);
@@ -63,7 +63,6 @@ export async function handleInviteButtonClick() {
     confirmButton.disabled = false;
     confirmButton.onclick = () => {
         showScreen('menu-buttons-area');
-        resetConfirmButton();
         confirmButton.onclick = handleConfirmParticipation;
     };
 }
