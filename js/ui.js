@@ -250,13 +250,6 @@ export function displayLeaderboard(leaderboardData) {
     const table = document.createElement('table');
     table.classList.add('leaderboard-table');
     table.innerHTML = `
-        <thead>
-            <tr>
-                <th>Место</th>
-                <th>Имя</th>
-                <th>Уровень</th>
-            </tr>
-        </thead>
         <tbody>
         </tbody>
     `;
