@@ -63,7 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
             logToScreen('User is banned. Displaying ban message.', true);
             displayMessage('Access to this application is restricted. If you believe this is an error or wish to receive the invitation, please contact the groom or the bride.', true);
             if (container) container.style.display = 'none';
-            TG.close();
         } else { // Обработка 'ERROR' (или других неожиданных статусов)
             logToScreen('Unknown user status or error. Displaying error message.', true);
             displayMessage('An error occurred while loading data. Please try again later.', true);
