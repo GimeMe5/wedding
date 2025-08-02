@@ -69,11 +69,11 @@ export async function checkUserStatus() {
     logToScreen('Начало запроса checkUserStatus...');
     try {
         const initData = TG ? TG.initData : '';
-        const userPayload = getTelegramUserPayload();
+        const userPayload = getTelegramUserPayload(); // Предполагается, что эта функция возвращает {telegramId, username, firstName}
 
         logToScreen(`Тело запроса для /user-status: ${JSON.stringify(userPayload, null, 2)}`);
 
-        const response = await fetch(`${API_BASE_URL}/user-status`, {
+        const response = await fetch(`${API_BASE_URL}/user-status`, { // Используйте ваш актуальный URL
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -83,17 +83,27 @@ export async function checkUserStatus() {
         });
 
         logToScreen(`Ответ от /user-status. Статус: ${response.status}`);
+
+        // --- ИЗМЕНЕНИЯ ЗДЕСЬ ---
+        if (response.status === 403) { // Если фильтр или контроллер возвращает 403 Forbidden
+            const errorText = await response.text();
+            logToScreen(`Ошибка 403 от /user-status: ${errorText}`, true);
+            return 'BANNED'; // Явно возвращаем BANNED
+        }
+
         if (!response.ok) {
             const errorText = await response.text();
             logToScreen(`Ошибка от /user-status: ${errorText}`, true);
             throw new Error(`Ошибка HTTP! Статус: ${response.status}. Ответ: ${errorText}`);
         }
+        // --- КОНЕЦ ИЗМЕНЕНИЙ ---
+
         const statusData = await response.json();
         logToScreen(`Полученные данные от /user-status: ${JSON.stringify(statusData, null, 2)}`);
-        return statusData.userStatus;
+        return statusData.userStatus; // Ожидаем, что бэкенд возвращает объект с полем userStatus
     } catch (error) {
         logToScreen(`Критическая ошибка при проверке статуса пользователя: ${error.message}`, true);
-        return 'error';
+        return 'ERROR'; // Изменил с 'error' на 'ERROR' для единообразия с 'BANNED'
     }
 }
 

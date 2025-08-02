@@ -29,12 +29,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Загрузка всего контента и отображение страницы
     async function loadAndDisplayContent() {
-        logToScreen('Запуск loadAndDisplayContent...');
-        const userStatus = await checkUserStatus();
-        logToScreen(`Полученный статус пользователя: "${userStatus}"`);
+        logToScreen('Starting loadAndDisplayContent...');
+        const telegramId = TG.initDataUnsafe.user?.id;
+        const username = TG.initDataUnsafe.user?.username;
+        const firstName = TG.initDataUnsafe.user?.first_name;
+
+        const userStatus = await checkUserStatus(telegramId, username, firstName);
+        logToScreen(`Received user status: "${userStatus}"`);
 
         if (userStatus === 'NEW' || userStatus === 'NOT_CONFIRMED') {
-            logToScreen('Статус пользователя позволяет отобразить основной контент.');
+            logToScreen('User status allows displaying main content.');
             const data = await fetchAllContent();
 
             section1.textContent = data.text1;
@@ -42,25 +46,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (data.cooldownDate) {
                 const targetDate = new Date(data.cooldownDate);
-                logToScreen(`Целевая дата для отсчета: ${targetDate.toLocaleString()}`);
+                logToScreen(`Target date for countdown: ${targetDate.toLocaleString()}`);
                 setCountdownInterval(targetDate);
             } else {
-                countdownElement.innerHTML = "Дата не загружена.";
-                logToScreen('Дата для отсчета не получена.', true);
+                countdownElement.innerHTML = "Date not loaded.";
+                logToScreen('Countdown date not received.', true);
             }
 
-            // Показываем основной контент и кнопку "Я приду"
             showScreen('main-content-area');
-            confirmButton.style.display = 'block'; // Кнопка "Я приду"
+            confirmButton.style.display = 'block'; // "Я приду" button
             container.style.opacity = '1';
-            logToScreen('Контейнер сделан видимым.');
+            logToScreen('Container made visible.');
         } else if (userStatus === 'CONFIRMED') {
-            logToScreen('Пользователь уже подтвердил участие. Отображаем меню кнопок.');
+            logToScreen('User has already confirmed participation. Displaying menu buttons.');
             showScreen('menu-buttons-area');
-            container.style.opacity = '1'; // Контейнер должен быть виден для меню
+            container.style.opacity = '1';
+        } else if (userStatus === 'BANNED') { // <--- НОВОЕ УСЛОВИЕ ДЛЯ ЗАБАНЕННЫХ
+            logToScreen('User is banned. Displaying ban message.', true);
+            // Ваше новое сообщение о бане на английском
+            displayMessage('Access to this application is restricted. If you believe this is an error or wish to receive the invitation, please contact the groom or the bride.', true);
+            if (container) container.style.display = 'none'; // Скрыть основной контейнер
+            TG.close(); // Опционально: закрыть Web App
         } else {
-            logToScreen('Неизвестный статус пользователя или ошибка. Отображаем сообщение об ошибке.', true);
-            displayMessage('Произошла ошибка при загрузке данных. Пожалуйста, попробуйте позже.', true);
+            logToScreen('Unknown user status or error. Displaying error message.', true);
+            displayMessage('An error occurred while loading data. Please try again later.', true);
         }
     }
 
