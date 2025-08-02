@@ -30,11 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Загрузка всего контента и отображение страницы
     async function loadAndDisplayContent() {
         logToScreen('Starting loadAndDisplayContent...');
-        const telegramId = TG.initDataUnsafe.user?.id;
-        const username = TG.initDataUnsafe.user?.username;
-        const firstName = TG.initDataUnsafe.user?.first_name;
-
-        const userStatus = await checkUserStatus(telegramId, username, firstName);
+        // getTelegramUserPayload уже вызывается внутри checkUserStatus в api.js,
+        // так что здесь не нужно передавать user?.id, username, firstName.
+        const userStatus = await checkUserStatus(); // <--- ВЫЗЫВАЕМ БЕЗ АРГУМЕНТОВ
         logToScreen(`Received user status: "${userStatus}"`);
 
         if (userStatus === 'NEW' || userStatus === 'NOT_CONFIRMED') {
@@ -61,13 +59,12 @@ document.addEventListener('DOMContentLoaded', () => {
             logToScreen('User has already confirmed participation. Displaying menu buttons.');
             showScreen('menu-buttons-area');
             container.style.opacity = '1';
-        } else if (userStatus === 'BANNED') { // <--- НОВОЕ УСЛОВИЕ ДЛЯ ЗАБАНЕННЫХ
+        } else if (userStatus === 'BANNED') { // <--- ЭТОТ БЛОК ОСТАЕТСЯ БЕЗ ИЗМЕНЕНИЙ
             logToScreen('User is banned. Displaying ban message.', true);
-            // Ваше новое сообщение о бане на английском
             displayMessage('Access to this application is restricted. If you believe this is an error or wish to receive the invitation, please contact the groom or the bride.', true);
-            if (container) container.style.display = 'none'; // Скрыть основной контейнер
-            TG.close(); // Опционально: закрыть Web App
-        } else {
+            if (container) container.style.display = 'none';
+            TG.close();
+        } else { // Обработка 'ERROR' (или других неожиданных статусов)
             logToScreen('Unknown user status or error. Displaying error message.', true);
             displayMessage('An error occurred while loading data. Please try again later.', true);
         }
