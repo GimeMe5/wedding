@@ -52,10 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // НОВЫЙ КОД: проверка и активация кнопки рассадки
             if (data.seatingImageUrl) {
-                // ПРИСВАИВАЕМ ЗНАЧЕНИЕ ИМПОРТИРОВАННОЙ ПЕРЕМЕННОЙ
                 seatingImageURL = data.seatingImageUrl;
-                seatingButton.disabled = false;
-                seatingButton.classList.remove('disabled');
+                seatingButton.disabled = false; // <-- Этот код убирает HTML-атрибут disabled
+                seatingButton.classList.remove('disabled'); // <-- Этот код убирает CSS-класс disabled
                 logToScreen('Кнопка "Рассадка" активирована. URL получен.');
             } else {
                 seatingButton.disabled = true;
@@ -75,10 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await fetchAllContent();
             if (data.seatingImageUrl) {
-                // ПРИСВАИВАЕМ ЗНАЧЕНИЕ ИМПОРТИРОВАННОЙ ПЕРЕМЕННОЙ
                 seatingImageURL = data.seatingImageUrl;
-                seatingButton.disabled = false;
-                seatingButton.classList.remove('disabled');
+                seatingButton.disabled = false; // <-- Этот код убирает HTML-атрибут disabled
+                seatingButton.classList.remove('disabled'); // <-- Этот код убирает CSS-класс disabled
                 logToScreen('Кнопка "Рассадка" активирована. URL получен.');
             } else {
                 seatingButton.disabled = true;
