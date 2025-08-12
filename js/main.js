@@ -2,7 +2,7 @@
 import { logToScreen } from './debug.js';
 import { checkUserStatus, fetchAllContent } from './api.js';
 import { showScreen, displayMessage, setCountdownInterval } from './ui.js';
-import { attachEventListeners, seatingImageURL } from './handlers.js'; // <-- ОБНОВЛЕНО: теперь seatingImageURL тоже импортируется
+import { attachEventListeners, seatingImageURL } from './handlers.js';
 
 // Сокращение для удобства
 const TG = window.Telegram.WebApp;
@@ -13,7 +13,7 @@ const section3 = document.getElementById('section3');
 const countdownElement = document.getElementById('countdown');
 const confirmButton = document.getElementById('confirmButton');
 const container = document.querySelector('.container');
-const seatingButton = document.getElementById('seatingButton'); // <-- ДОБАВЛЕНО
+const seatingButton = document.getElementById('seatingButton');
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // НОВЫЙ КОД: проверка и активация кнопки рассадки
             if (data.seatingImageUrl) {
+                // ПРИСВАИВАЕМ ЗНАЧЕНИЕ ИМПОРТИРОВАННОЙ ПЕРЕМЕННОЙ
                 seatingImageURL = data.seatingImageUrl;
                 seatingButton.disabled = false;
                 seatingButton.classList.remove('disabled');
@@ -72,9 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
             showScreen('menu-buttons-area');
             container.style.opacity = '1';
 
-            // НОВЫЙ КОД: проверка и активация кнопки рассадки
             const data = await fetchAllContent();
             if (data.seatingImageUrl) {
+                // ПРИСВАИВАЕМ ЗНАЧЕНИЕ ИМПОРТИРОВАННОЙ ПЕРЕМЕННОЙ
                 seatingImageURL = data.seatingImageUrl;
                 seatingButton.disabled = false;
                 seatingButton.classList.remove('disabled');

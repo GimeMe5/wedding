@@ -1,7 +1,7 @@
 // js/handlers.js
 import { showScreen, resetConfirmButton, setCountdownInterval, showPopup, hidePopup, displayQuestTasks, setQuizQuestionVisibility, displayLeaderboard, showSeatingImage } from './ui.js';
 import { fetchAllContent, confirmParticipationRequest, fetchNextQuestion, submitQuizAnswerRequest, fetchQuestTasks, fetchLeaderboard } from './api.js';
-import { logToScreen } from './debug.js';
+import { logToScreen } from './debug.js'
 
 const confirmButton = document.getElementById('confirmButton');
 const inviteButton = document.getElementById('inviteButton');
@@ -23,10 +23,10 @@ const quizAnswerInput = document.getElementById('quizAnswerInput');
 const submitQuizAnswerButton = document.getElementById('submitQuizAnswer');
 const quizBackButton = document.getElementById('quizBackButton');
 const popupOkButton = document.getElementById('popupOkButton');
-const seatingButton = document.getElementById('seatingButton'); // Теперь нам нужен доступ к этой кнопке
+const seatingButton = document.getElementById('seatingButton');
 const seatingBackButton = document.getElementById('seatingBackButton');
 
-let seatingImageURL = "https://s3.ru1.storage.beget.cloud/e2464ee0686d-strinity/wedding/seating.png";
+export let seatingImageURL = "https://s3.ru1.storage.beget.cloud/e2464ee0686d-strinity/wedding/seating.png";
 
 // Флаг для отслеживания, был ли уже показан квиз - теперь не так критичен, т.к. логика в loadNextQuestionForQuiz
 // let quizOpenedOnce = false;
