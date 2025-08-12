@@ -3,7 +3,7 @@
 // Определяем глобальный флаг для отладочного режима.
 // По умолчанию можно установить false (отключено) или true (включено).
 // Мы будем управлять им из main.js или index.html
-window.DEBUG_MODE = true; // Устанавливаем true для текущей отладки, потом можно поменять на false
+window.DEBUG_MODE = false; // Устанавливаем true для текущей отладки, потом можно поменять на false
 
 const debugOutput = document.getElementById('debug-output');
 
