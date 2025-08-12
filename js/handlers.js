@@ -1,5 +1,5 @@
 // js/handlers.js
-import { showScreen, resetConfirmButton, setCountdownInterval, showPopup, hidePopup, displayQuestTasks, setQuizQuestionVisibility, displayLeaderboard } from './ui.js';
+import { showScreen, resetConfirmButton, setCountdownInterval, showPopup, hidePopup, displayQuestTasks, setQuizQuestionVisibility, displayLeaderboard, showSeatingImage } from './ui.js';
 import { fetchAllContent, confirmParticipationRequest, fetchNextQuestion, submitQuizAnswerRequest, fetchQuestTasks, fetchLeaderboard } from './api.js';
 import { logToScreen } from './debug.js';
 
@@ -23,6 +23,10 @@ const quizAnswerInput = document.getElementById('quizAnswerInput');
 const submitQuizAnswerButton = document.getElementById('submitQuizAnswer');
 const quizBackButton = document.getElementById('quizBackButton');
 const popupOkButton = document.getElementById('popupOkButton');
+const seatingButton = document.getElementById('seatingButton'); // Теперь нам нужен доступ к этой кнопке
+const seatingBackButton = document.getElementById('seatingBackButton');
+
+let seatingImageURL = "https://s3.ru1.storage.beget.cloud/e2464ee0686d-strinity/wedding/seating.png";
 
 // Флаг для отслеживания, был ли уже показан квиз - теперь не так критичен, т.к. логика в loadNextQuestionForQuiz
 // let quizOpenedOnce = false;
@@ -188,4 +192,17 @@ export function attachEventListeners() {
     submitQuizAnswerButton.addEventListener('click', handleSubmitQuizAnswer);
     quizBackButton.addEventListener('click', handleQuizBackButtonClick);
     popupOkButton.addEventListener('click', handlePopupOk);
+    seatingButton.addEventListener('click', handleSeatingButtonClick);
+    seatingBackButton.addEventListener('click', handleSeatingBackButtonClick);
 }
+
+export function handleSeatingButtonClick() {
+    logToScreen('Нажата кнопка "Рассадка".');
+    showSeatingImage(seatingImageURL);
+}
+
+export function handleSeatingBackButtonClick() {
+    logToScreen('Нажата кнопка "Назад" на экране рассадки.');
+    showScreen('menu-buttons-area');
+}
+

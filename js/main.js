@@ -2,7 +2,7 @@
 import { logToScreen } from './debug.js';
 import { checkUserStatus, fetchAllContent } from './api.js';
 import { showScreen, displayMessage, setCountdownInterval } from './ui.js';
-import { attachEventListeners } from './handlers.js';
+import { attachEventListeners, seatingImageURL } from './handlers.js'; // <-- ОБНОВЛЕНО: теперь seatingImageURL тоже импортируется
 
 // Сокращение для удобства
 const TG = window.Telegram.WebApp;
@@ -13,6 +13,8 @@ const section3 = document.getElementById('section3');
 const countdownElement = document.getElementById('countdown');
 const confirmButton = document.getElementById('confirmButton');
 const container = document.querySelector('.container');
+const seatingButton = document.getElementById('seatingButton'); // <-- ДОБАВЛЕНО
+
 
 document.addEventListener('DOMContentLoaded', () => {
     // Инициализация Telegram Web App
@@ -22,19 +24,16 @@ document.addEventListener('DOMContentLoaded', () => {
         logToScreen('Telegram Web App SDK инициализирован.');
         logToScreen(`initData: ${TG.initData}`);
         logToScreen(`initDataUnsafe: ${JSON.stringify(TG.initDataUnsafe, null, 2)}`);
-        // TG.setBackgroundColor('#0a0a2a');
     } else {
         logToScreen('Telegram Web App SDK не загружен. Функционал может быть ограничен.', true);
     }
 
-    // Загрузка всего контента и отображение страницы
     async function loadAndDisplayContent() {
         logToScreen('Starting loadAndDisplayContent...');
-        // getTelegramUserPayload уже вызывается внутри checkUserStatus в api.js,
-        // так что здесь не нужно передавать user?.id, username, firstName.
-        const userStatus = await checkUserStatus(); // <--- ВЫЗЫВАЕМ БЕЗ АРГУМЕНТОВ
+        const userStatus = await checkUserStatus();
         logToScreen(`Received user status: "${userStatus}"`);
 
+        // Логика для NEW/NOT_CONFIRMED
         if (userStatus === 'NEW' || userStatus === 'NOT_CONFIRMED') {
             logToScreen('User status allows displaying main content.');
             const data = await fetchAllContent();
@@ -51,27 +50,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 logToScreen('Countdown date not received.', true);
             }
 
+            // НОВЫЙ КОД: проверка и активация кнопки рассадки
+            if (data.seatingImageUrl) {
+                seatingImageURL = data.seatingImageUrl;
+                seatingButton.disabled = false;
+                seatingButton.classList.remove('disabled');
+                logToScreen('Кнопка "Рассадка" активирована. URL получен.');
+            } else {
+                seatingButton.disabled = true;
+                seatingButton.classList.add('disabled');
+                logToScreen('Кнопка "Рассадка" неактивна. URL не получен.');
+            }
+
             showScreen('main-content-area');
-            confirmButton.style.display = 'block'; // "Я приду" button
+            confirmButton.style.display = 'block';
             container.style.opacity = '1';
-            logToScreen('Container made visible.');
-        } else if (userStatus === 'CONFIRMED') {
+        }
+        // Логика для CONFIRMED
+        else if (userStatus === 'CONFIRMED') {
             logToScreen('User has already confirmed participation. Displaying menu buttons.');
             showScreen('menu-buttons-area');
             container.style.opacity = '1';
-        } else if (userStatus === 'BANNED') { // <--- ЭТОТ БЛОК ОСТАЕТСЯ БЕЗ ИЗМЕНЕНИЙ
+
+            // НОВЫЙ КОД: проверка и активация кнопки рассадки
+            const data = await fetchAllContent();
+            if (data.seatingImageUrl) {
+                seatingImageURL = data.seatingImageUrl;
+                seatingButton.disabled = false;
+                seatingButton.classList.remove('disabled');
+                logToScreen('Кнопка "Рассадка" активирована. URL получен.');
+            } else {
+                seatingButton.disabled = true;
+                seatingButton.classList.add('disabled');
+                logToScreen('Кнопка "Рассадка" неактивна. URL не получен.');
+            }
+        }
+        // ...existing logic for BANNED and ERROR
+        else if (userStatus === 'BANNED') {
             logToScreen('User is banned. Displaying ban message.', true);
             displayMessage('Access to this application is restricted. If you believe this is an error or wish to receive the invitation, please contact the groom or the bride.', true);
             if (container) container.style.display = 'none';
-        } else { // Обработка 'ERROR' (или других неожиданных статусов)
+        } else {
             logToScreen('Unknown user status or error. Displaying error message.', true);
             displayMessage('An error occurred while loading data. Please try again later.', true);
         }
     }
 
-    // Привязываем все обработчики событий
     attachEventListeners();
-
-    // Запускаем проверку статуса и загрузку контента
     loadAndDisplayContent();
 });

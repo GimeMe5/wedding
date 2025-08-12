@@ -425,6 +425,24 @@ body {
     color: #ffcc00; /* Золотистый цвет для места */
 }
 
+.seating-image {
+    max-width: 100%;
+    /* Используем vw (viewport width), чтобы изображение занимало почти всю ширину экрана */
+    max-height: 75vh; /* Ограничиваем высоту, чтобы осталось место для кнопки */
+    object-fit: contain; /* Сохраняет пропорции изображения */
+    display: block;
+    margin: 0 auto 20px;
+}
+
+#seating-screen .screen-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box; /* Важно, чтобы padding не выходил за рамки */
+}
 
 /* Адаптивные настройки (обновленные) */
 @media (max-width: 768px) {

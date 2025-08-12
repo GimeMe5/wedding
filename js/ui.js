@@ -17,6 +17,8 @@ const popupMessage = document.getElementById('popup-message');
 const popupText = document.getElementById('popupText');
 const tasksIntroText = document.getElementById('tasks-intro-text');
 const tasksListContainer = document.getElementById('tasks-list-container');
+const seatingScreen = document.getElementById('seating-screen');
+const seatingImage = document.getElementById('seatingImage');
 
 // Элементы квиза и рейтинга
 const quizQuestionElement = document.getElementById('quizQuestion');
@@ -249,4 +251,14 @@ export function displayLeaderboard(leaderboardData) {
 
     leaderboardList.appendChild(table);
     logToScreen('Рейтинг лидеров успешно отображен.');
+}
+
+export function showSeatingImage(imageUrl) {
+    if (imageUrl) {
+        seatingImage.src = imageUrl;
+        showScreen('seating-screen');
+    } else {
+        // Если картинки нет, показываем сообщение
+        showPopup('Схема рассадки пока не доступна.');
+    }
 }
