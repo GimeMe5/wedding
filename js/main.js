@@ -2,7 +2,7 @@
 import { logToScreen } from './debug.js';
 import { checkUserStatus, fetchAllContent } from './api.js';
 import { showScreen, displayMessage, setCountdownInterval } from './ui.js';
-import { attachEventListeners, seatingImageURL } from './handlers.js';
+import { attachEventListeners } from './handlers.js';
 
 // Сокращение для удобства
 const TG = window.Telegram.WebApp;
