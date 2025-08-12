@@ -50,18 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 logToScreen('Countdown date not received.', true);
             }
 
-            // НОВЫЙ КОД: проверка и активация кнопки рассадки
-            if (data.seatingImageUrl) {
-                seatingImageURL = data.seatingImageUrl;
-                seatingButton.disabled = false; // <-- Этот код убирает HTML-атрибут disabled
-                seatingButton.classList.remove('disabled'); // <-- Этот код убирает CSS-класс disabled
-                logToScreen('Кнопка "Рассадка" активирована. URL получен.');
-            } else {
-                seatingButton.disabled = true;
-                seatingButton.classList.add('disabled');
-                logToScreen('Кнопка "Рассадка" неактивна. URL не получен.');
-            }
-
             showScreen('main-content-area');
             confirmButton.style.display = 'block';
             container.style.opacity = '1';
@@ -71,18 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
             logToScreen('User has already confirmed participation. Displaying menu buttons.');
             showScreen('menu-buttons-area');
             container.style.opacity = '1';
-
-            const data = await fetchAllContent();
-            if (data.seatingImageUrl) {
-                seatingImageURL = data.seatingImageUrl;
-                seatingButton.disabled = false; // <-- Этот код убирает HTML-атрибут disabled
-                seatingButton.classList.remove('disabled'); // <-- Этот код убирает CSS-класс disabled
-                logToScreen('Кнопка "Рассадка" активирована. URL получен.');
-            } else {
-                seatingButton.disabled = true;
-                seatingButton.classList.add('disabled');
-                logToScreen('Кнопка "Рассадка" неактивна. URL не получен.');
-            }
+            seatingButton.disabled = false;
+            seatingButton.classList.remove('disabled');
+            logToScreen('Кнопка "Рассадка" активирована для подтвержденного пользователя.');
         }
         // ...existing logic for BANNED and ERROR
         else if (userStatus === 'BANNED') {

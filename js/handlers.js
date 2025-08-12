@@ -3,6 +3,7 @@ import { showScreen, resetConfirmButton, setCountdownInterval, showPopup, hidePo
 import { fetchAllContent, confirmParticipationRequest, fetchNextQuestion, submitQuizAnswerRequest, fetchQuestTasks, fetchLeaderboard } from './api.js';
 import { logToScreen } from './debug.js'
 
+
 const confirmButton = document.getElementById('confirmButton');
 const inviteButton = document.getElementById('inviteButton');
 const rulesButton = document.getElementById('rulesButton');
@@ -26,7 +27,7 @@ const popupOkButton = document.getElementById('popupOkButton');
 const seatingButton = document.getElementById('seatingButton');
 const seatingBackButton = document.getElementById('seatingBackButton');
 
-export let seatingImageURL = "https://s3.ru1.storage.beget.cloud/e2464ee0686d-strinity/wedding/seating.png";
+export const seatingImageURL = "https://s3.ru1.storage.beget.cloud/e2464ee0686d-strinity/wedding/seating.png";
 
 // Флаг для отслеживания, был ли уже показан квиз - теперь не так критичен, т.к. логика в loadNextQuestionForQuiz
 // let quizOpenedOnce = false;
