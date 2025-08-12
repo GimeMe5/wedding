@@ -93,7 +93,7 @@ export function showScreen(screenId) {
     // Список всех основных экранов для скрытия
     const allScreens = [
         mainContentArea, menuButtonsArea, rulesScreen,
-        questScreen, tasksScreen, quizScreen
+        questScreen, tasksScreen, quizScreen, seatingScreen
     ];
 
     // Скрываем все основные экраны
